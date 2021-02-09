@@ -97,14 +97,17 @@ Fields:
 1. *version*: **NUMERIC**. The version of the specification defining the data
    communicated in this QR code.
 2. *number*: **NUMERIC**. The unique identifying number assigned to this coupon.
-3. *total*: **NUMERIC**. The total number of coupons issued in the batch of coupons this one
-   was issued from.
+3. *total*: **NUMERIC**. The total number of coupons issued in the batch of
+   coupons this one was issued from.
 4. *city*: **STRING**. The name of the city, town, or other local
    area which designates vaccination eligibility and delivery schedule for the
    **HOLDER**.
+    1. When the city name contains characters which cannot be encoded to QR, the
+       city name may be Percent Encoded as part of QR Code generation. Readers
+       must decode any substitutions prior to signature verification.
 5. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 6. *indicator*: **SHORTSTRING**. an indication of the priority assignment for
-   **HOLDER**, or "none" if there is no priority.
+   **HOLDER**, or the literal string "none" if there is no priority assignment.
 
 #### Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
@@ -121,10 +124,12 @@ following rules MUST be followed to generate consistent results:
 1. The elements MUST NOT be URL Encoded  prior to hashing.
 1. The output MUST be in hexadecimal format.
 
-Thus, the SHA256 hash of the data in the example below would be calculated as follows:
+Thus, the SHA256 hash of the data in the example below would be calculated as
+in the following pseudo-code:
 
 ```
-hash(“${number}${total}${city}${phase}${indicator}”) == hash(“37500BOSTON1BTEACHER”)
+hash(“${number}${total}${city}${phase}${indicator}”) 
+== hash(“37500BOSTON1BTEACHER”)
 -> “710183e3780fed3c48fce4b38da83775a7c47e9961b4a7ee822628e8c190359e”
 ```
 
@@ -188,11 +193,13 @@ Fields:
 1. *version*: **NUMERIC**. The version of the specification defining the data
    communicated in this QR code.
 2. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**.
-   Currently designated values:
+   Currently designated values are below. Future versions of this specification
+   may designate other values as required.
    * 0: The **HOLDER** has not received any vaccine.
    * 1: The **HOLDER** has received the first (of two) dose of a vaccine.
    * 2: The **HOLDER** has received the second (of two) dose of a vaccine.
-3. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
+3. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as
+   defined by the Passkey Specification.
 
 JSON example:
 ```json
@@ -215,12 +222,16 @@ JSON example:
 Fields:
 1. *version*: **NUMERIC**. The version of the specification defining the data
    communicated in this QR code.
-2. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating
-   the **HOLDER**.
-3. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
-4. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
-Hashing Rules:
-When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules MUST be followed to generate consistent results:
+2. *name*: **STRING**. The full name of the **HOLDER**, to be used when
+   authenticating the **HOLDER**.
+3. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when
+   authenticating the **HOLDER**.
+4. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH**
+   calculation.
+
+#### Hashing Rules:
+When generating a passkey hash (for inclusion in the **BADGE** structure), the
+following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements MUST be concatenated in the following order:
     1. name
@@ -230,12 +241,13 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the f
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL encoded prior to hashing.
 1. The output MUST be in hexadecimal format.
-Thus, the SHA256 hash of the data in the example below would be calculated as follows:
+Thus, the SHA256 hash of the data in the example below would be calculated as
+in the following pseudo-code:
+
 ```
 hash(“${name}${DoB}${salt}”) == hash(“JANE DOE190101011BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
 ```
-
 
 JSON example:
 ```json
