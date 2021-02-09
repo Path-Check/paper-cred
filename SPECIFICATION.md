@@ -75,10 +75,10 @@ Similarly, the key/value pairs within a block may appear in any order.
 All fields (keys as well as values) are case-insensitive in both JSON and URI
 format. For clarity and ease of reading, examples in this document are given
 in mixed case. When performing operations such as hash comparison, a
-case-insensitive comparison function must be used.
+case-insensitive comparison function MUST be used.
 
 ### Signature and Hash Verification
-Due to the Alphanumeric QR code character set, cryptographic signatures and hashes must be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be reversed before signature or hash verification.
+Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be reversed before signature or hash verification.
 
 ### Format of the **SIGNATURE** Block
 The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a keyId referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store.
@@ -108,9 +108,9 @@ Fields:
 
 #### Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
-following rules must be followed to generate consistent results:
+following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-2. The elements must be concatenated in the following order:
+2. The elements MUST be concatenated in the following order:
     1. number
     2. total
     3. city
@@ -119,7 +119,7 @@ following rules must be followed to generate consistent results:
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL Encoded  prior to hashing.
-1. The output must be in hexadecimal format.
+1. The output MUST be in hexadecimal format.
 
 Thus, the SHA256 hash of the data in the example below would be calculated as follows:
 
@@ -220,16 +220,16 @@ Fields:
 3. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 4. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 Hashing Rules:
-When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules must be followed to generate consistent results:
+When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements must be concatenated in the following order:
+1. The elements MUST be concatenated in the following order:
     1. name
     1. DoB
     1. salt
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL encoded prior to hashing.
-1. The output must be in hexadecimal format.
+1. The output MUST be in hexadecimal format.
 Thus, the SHA256 hash of the data in the example below would be calculated as follows:
 ```
 hash(“${name}${DoB}${salt}”) == hash(“JANE DOE190101011BC93AB4AXD3”)
