@@ -83,11 +83,12 @@ Due to the Alphanumeric QR code character set, cryptographic signatures and hash
 ### Format of the **SIGNATURE** Block
 The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a keyId referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store.
 
-Example Signature Block *\1* fragment)
+Example Signature Block (JSON fragment)
 ```json
 "signature": {
     "keyId": "cdc:1a9",
-   "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94",
+   "hex":
+"3045022100f239e3cc363a0ef44a72c3458ea69620375b0875c541b3e1e4973c0d14bd4b4b02205aec76cb66eafbd0ec232c55cd95248cfa80e01dfd71ecbce7afc3196cdf178d",
 }
 ```
 
@@ -141,7 +142,8 @@ JSON example:
   },
   "signature": {
     "keyId": "cdc:1a9",
-    "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94",
+    "hex":
+"3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a",
   }
 }
 ```
@@ -175,7 +177,8 @@ JSON example:
   },
   "signature": {
     "keyId": "cdc:1a9",
-    "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94"
+    "hex":
+"3046022100fdff876e90286a0b06c4181d78b23d5b960cb60a53a94f946b12bbb321ec24c6022100c22e739dfd59b37f8eddc915475190e12f8c10a632560afaab68e498c12de2ac"
   }
 }
 ```
@@ -202,7 +205,8 @@ JSON example:
   },
   "signature": {
     "keyId": "cdc:1a9",
-    "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94"
+    "hex":
+"304402203210213d35685bed9c9df83218839d0ea1f10cf50e64b0a3a8fbdcfbde0a6bf00220494bfc07481d285d00de9cf5b30a81754314b9cfccb6651597c733cc680ca588"
   }
 }
 ```
