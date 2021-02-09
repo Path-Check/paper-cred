@@ -110,12 +110,11 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules must be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 2. The elements must be concatenated in the following order:
-  1. number
-  1. total
-  1. city
-  1. phase
-  1. indicator
-
+    1. number
+    2. total
+    3. city
+    4. phase
+    5. indicator
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL Encoded  prior to hashing.
@@ -220,9 +219,9 @@ Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules must be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements must be concatenated in the following order:
-  1. Name
-  1. DoB
-  1. Salt
+    1. name
+    1. DoB
+    1. salt
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL encoded prior to hashing.
