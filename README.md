@@ -1,4 +1,4 @@
-# COVID-19 Verifiable Credentials Specification using QR Codes. 
+# Paper-first COVID-19 Verifiable Credentials using QR Codes. 
 
 We present an specification to communicate COVID-related Verifiable Credentials via digitally signed QR Code stickers on paper cards. Due its physical nature and simplicity, digitally-signed QR codes may be a convenient and nonintrusive modality for some users seeking vaccination while enabling verification of user-controlled immunization records. The protocol expects the verifier app to be off-line and that the user doesn't need anything more than a Paper Card (no electronic needs on the user side). Personally identifiable contact and health information are stored on the QR Codes themseves, allowing a user to go through the vaccination procedures in a Peer-to-Peer fashing wihtout the need to ever transfer the user's information to any centralized, or private or public blockchain system. The proposed system improves the efficiency, privacy, equity and effectiveness by augmenting the existing protocols to work with fully off-line information flows. 
 
