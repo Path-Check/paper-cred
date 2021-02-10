@@ -94,7 +94,7 @@ following rules MUST be followed to generate consistent results:
     1. Indicator
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
-1. The elements MUST NOT be URL Encoded  prior to hashing.
+1. The elements MUST NOT be URL Encoded prior to hashing.
 1. The output MUST be in hexadecimal format.
 
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
