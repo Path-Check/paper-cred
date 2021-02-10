@@ -1,6 +1,6 @@
 # Paper-first Verifiable Vaccination Credentials using QR Codes. 
 
-We present an specification to communicate COVID-related Verifiable Credentials via digitally signed QR Code stickers on paper cards. Due its physical nature and simplicity, digitally-signed QR codes may be a convenient and nonintrusive modality for some users seeking vaccination while enabling verification of user-controlled immunization records. The protocol expects the verifier app to be off-line and that the user doesn't need anything more than a Paper Card (no electronic needs on the user side). Personally identifiable contact and health information are stored on the QR Codes themseves, allowing a user to go through the vaccination procedures in a Peer-to-Peer fashing wihtout the need to ever transfer the user's information to any centralized, or private or public blockchain system. The proposed system improves the efficiency, privacy, equity and effectiveness by augmenting the existing protocols to work with fully off-line information flows. 
+We present a specification to communicate COVID-related Verifiable Credentials via digitally signed QR Code stickers on paper cards. Due to its physical nature and simplicity, digitally-signed QR codes may be a convenient and nonintrusive modality for some users seeking vaccination while enabling verification of user-controlled immunization records. The protocol expects the verifier app to be off-line and that the user doesn't need anything more than a Paper Card (no electronic needs on the user side). Personally identifiable contact and health information are stored on the QR Codes themselves, allowing a user to go through the vaccination procedures in a Peer-to-Peer fashion without the need to ever transfer the user's information to any centralized, or private, or public blockchain system. The proposed system improves the efficiency, privacy, equity, and effectiveness by augmenting the existing protocols to work with fully off-line information flows. 
 
 <p align="center"><img src="https://github.com/Path-Check/vaccine-diary/blob/main/Resources/card_visualization.gif" alt="App_gif" width="650" style="margin: auto"/></p>
 
@@ -14,7 +14,7 @@ We developed a modification of today's vaccination cards to add 4 signed QR Code
 
 The patient journey goes through 3 major stages:
 1. Eligibility Check/Scheduling: Vaccination coupon QR codes are distributed to everyone by the appropriate regional vaccination administrator. This can be done either with paper vaccination cards, by SMS, using a web site, or downloading an application. The coupon code behaves as a User ID for the entire vaccination flow. 
-2. User Check in: At the vaccination site, the patient arrives and their vaccination coupon is scanned and their eligibility and appointment is verified.
+2. User Check-in: At the vaccination site, the patient arrives and their vaccination coupon is scanned and their eligibility and appointment are verified.
 3. Vaccination Certificate: Once the vaccination is administered, the patient receives another QR code in the form of a sticker. This QR code, a badge, indicates the vaccination was administered providing “proof” of vaccination along with other important information.
 
 The 4 QR Codes designed for vaccinations procedures create a possibility of selective disclosure of health information by choosing which one to show at any point in time. 
@@ -25,15 +25,15 @@ The distribution of a vaccination coupon signifies the beginning of the vaccinat
 
 ## The Badge QR Code
 
-The badge contains the information about the vaccination itself. It's a full health record, including vaccine brand, dosage, site, etc. It is signed by the vaccination provider and serves as a Verifiable Credential informing that the user in the badge was vaccinated under those conditions. This QR Code should be shown when the User goes to see his Primary Care Provider or other health care professionals that need to see the details of his procedure. 
+The badge contains information about the vaccination itself. It's a full health record, including vaccine brand, dosage, site, etc. It is signed by the vaccination provider and serves as a Verifiable Credential informing that the user in the badge was vaccinated under those conditions. This QR Code should be shown when the User goes to see his Primary Care Provider or other health care professionals that need to see the details of his procedure. 
 
 ## The Passkey QR Code
 
-The PassKey contains personally identifyable information. It's what links all other QR Codes to the person. A hash of the signed PassKey is used as identifier on the other QR Codes. 
+The PassKey contains personally identifiable information. It's what links all other QR Codes to the person. A hash of the signed PassKey is used as an identifier on the other QR Codes. 
 
 ## The Status QR Code
 
-The Status QR Code constains only one field: vaccinated or not. This QR Code is ideal to use as a check in credential that verifiies the user has been vaccinated, without revealing anymore more information about the vaccine or the user itself. 
+The Status QR Code contains only one field: vaccinated or not. This QR Code is ideal to use as a check-in credential that verifies the user has been vaccinated, without revealing anymore more information about the vaccine or the user itself. 
 
 # Protocol Releases
 
@@ -43,4 +43,3 @@ The Status QR Code constains only one field: vaccinated or not. This QR Code is 
 * [FAQ](FAQ.md)
 
 # Contributing
-
