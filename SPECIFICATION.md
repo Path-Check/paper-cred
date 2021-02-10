@@ -32,7 +32,7 @@ Example: `20200201` is 1 February, 2020.
 ## Data Formats
 Data represented in QR codes can be encoded in the following formats:
 1. [JSON](https://json.org) Format. When data length is not at issue, this format is simple to read and parse.
-2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are [Percent Encoded](https://en.wikipedia.org/wiki/Percent-encoding)
+2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are [Percent Encoded](https://en.wikipedia.org/wiki/Percent-encoding).
 
 With URI format, data is organized according to the following URI schema:
 ```
@@ -88,11 +88,11 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements MUST be concatenated in the following order, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
-    1. number
-    1. total
-    1. city
-    1. phase
-    1. indicator
+    1. Number
+    1. Total
+    1. City
+    1. Phase
+    1. Indicator
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL Encoded  prior to hashing.
@@ -196,9 +196,9 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements MUST be concatenated in the following order, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
-    1. name
+    1. Name
     1. DoB
-    1. salt
+    1. Salt
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL encoded prior to hashing.
