@@ -48,10 +48,10 @@ cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdb
 With the Json format, the payload is organized in the following schema: 
 ```json
 {
-  "type": <name>,
-  "version": <number>,
-  "data": <payload>,
-  "signature": <public key id and signature in Hex of the payload>
+  "type": "",
+  "version": 0,
+  "data": {},
+  "signature": {}
 }
 ```
 
