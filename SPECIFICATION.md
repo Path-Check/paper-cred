@@ -104,7 +104,7 @@ Example Signature Block (JSON fragment)
 "signature": {
     "keyId": "cdc:1a9",
    "hex":
-"3045022100f239e3cc363a0ef44a72c3458ea69620375b0875c541b3e1e4973c0d14bd4b4b02205aec76cb66eafbd0ec232c55cd95248cfa80e01dfd71ecbce7afc3196cdf178d",
+"3045022100f239e3cc363a0ef44a72c3458ea69620375b0875c541b3e1e4973c0d14bd4b4b02205aec76cb66eafbd0ec232c55cd95248cfa80e01dfd71ecbce7afc3196cdf178d"
 }
 ```
 
@@ -168,7 +168,7 @@ JSON example:
   "signature": {
     "keyId": "cdc:1a9",
     "hex":
-"3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a",
+"3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
   }
 }
 ```
@@ -281,7 +281,7 @@ JSON example:
   "data": {
     "name": "Jane Doe",
     "DoB": 19010101,
-    "salt": "1Bc93ab4axd3",
+    "salt": "1Bc93ab4axd3"
   },
   "signature": {
     "keyId": "cdc:1a9",
