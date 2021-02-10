@@ -11,13 +11,13 @@ PathCheck Vaccination Credential pre-printed card.
 ### Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which
 are defined as follows:
-1. **COUPON**: the **COUPON** QR code is designated to communicate eligibility
+1. **COUPON**: The **COUPON** QR code is designated to communicate eligibility
    for vaccination.
-1. **BADGE**: the **BADGE** QR code is designated to contain information about
+1. **BADGE**: The **BADGE** QR code is designated to contain information about
    the vaccines received by the **HOLDER**.
-1. **STATUS**: the **STATUS** QR code is designated to contain information about
+1. **STATUS**: The **STATUS** QR code is designated to contain information about
    the vaccination status of the **HOLDER**.
-1. **PASSKEY**: the **PASSKEY** QR code contains information that can be
+1. **PASSKEY**: The **PASSKEY** QR code contains information that can be
    correlated with other identification carried by the HOLDER to authenticate
    them.
 1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated,
@@ -38,9 +38,9 @@ This document will use the following terms to define data types.
    [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601).
    Example:
    `20200201` is 1 February, 2020.
-5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8
+5. **SHORTSTRING**: A sequence of US-ASCII characters which is limited to 8
    bytes in length.
-6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
+6. **SHORTNUMERIC**: A **NUMERIC** with a maximum value of 9.
 
 ## Data Formats
 Data represented in QR codes can be encoded in the following formats:
@@ -124,7 +124,7 @@ Fields:
     1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the
        city name should be truncated until its length does not exceed 255 bytes.
 5. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
-6. *indicator*: **SHORTSTRING**. an indication of the priority assignment for
+6. *indicator*: **SHORTSTRING**. An indication of the priority assignment for
    **HOLDER**, or the literal string "none" if there is no priority assignment.
 
 #### Hashing Rules:
