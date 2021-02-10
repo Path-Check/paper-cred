@@ -9,8 +9,7 @@ This document describes the data fields and format of the inputs to the
 PathCheck Vaccination Credential pre-printed card.
 
 ### Terms and Definitions
-For the purposes of brevity, this document refers to the following terms which
-are defined as follows:
+For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **COUPON**: The **COUPON** QR code is designated to communicate eligibility for vaccination.
 1. **BADGE**: The **BADGE** QR code is designated to contain information about the vaccines received by the **HOLDER**.
 1. **STATUS**: The **STATUS** QR code is designated to contain information about the vaccination status of the **HOLDER**.
@@ -29,14 +28,16 @@ This document will use the following terms to define data types.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 
-## Data Formats
+## General Offline Credential Data Format
+All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 digest in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block and the **SIGNATURE** block. The type field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
+
 Data represented in QR codes can be encoded in the following formats:
 1. [JSON](https://json.org) Format. When data length is not at issue, this format is simple to read and parse.
 2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are [Percent Encoded](https://en.wikipedia.org/wiki/Percent-encoding).
 
-With URI format, data is organized according to the following URI schema:
+With URI format, payload is organized according to the following URI schema:
 ```
-cred:type:version:signatureHex@keyId?data
+cred:type:version:signatureHex@keyId?payload
 ```
 
 Example:
@@ -44,9 +45,34 @@ Example:
 cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?number=37&total=5000&city=San%20Francisco&phase=1B&indicator=Teacher
 ```
 
+With the Json format, the payload is organized in the following schema: 
+```json
+{
+  "type": <name>,
+  "version": <number>,
+  "data": <payload>,
+  "signature": <public key id and signature in Hex of the payload>
+}
+```
 
-## QR Code Specifications
-All QR codes contain a data set and a cryptographic signature. The cryptographic signature is a SHA256 digest in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block and the **SIGNATURE** block.
+JSON example:
+```json
+{
+  "type": "coupon",
+  "version": 1,
+  "data": {
+    "number": 37,
+    "total": 5000,
+    "city": "Boston",
+    "phase": "1B",
+    "indicator": "Teacher"
+  },
+  "signature": {
+    "keyId": "cdc:1a9",
+    "hex": "3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
+  }
+}
+```
 
 ### Data Ordering
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
@@ -77,9 +103,8 @@ Example Signature Block (JSON fragment)
 }
 ```
 
-### Coupon Specification
+## Coupon Payload Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *number*: **NUMERIC**. The unique identifying number assigned to this coupon.
 1. *total*: **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.
 1. *city*: **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
@@ -89,9 +114,8 @@ Fields:
 1. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 1. *indicator*: **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
 
-#### Hashing Rules:
-When generating a passkey hash (for inclusion in the **BADGE** structure), the
-following rules MUST be followed to generate consistent results:
+### Hashing Rules:
+When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements MUST be concatenated in the following order, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
     1. Number
@@ -132,9 +156,8 @@ JSON example:
 }
 ```
 
-### Badge Specification
+## Badge Payload Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *coupon*: **HASH**. The cryptographic hash of the data in the coupon.
 1. *doseInfo*: **DOSEINFO**. Information about the dose or doses received by the **HOLDER**.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
@@ -160,9 +183,8 @@ JSON example:
 }
 ```
 
-### Status Specification
+## Status Payload Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccine.
    * 1: The **HOLDER** has received the first (of two) dose of a vaccine.
@@ -185,16 +207,15 @@ JSON example:
 }
 ```
 
-### Passkey Specification
+## Passkey Payload Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
 1. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
-#### Hashing Rules:
+### Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
