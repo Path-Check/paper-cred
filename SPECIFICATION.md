@@ -33,7 +33,10 @@ This document will use the following terms to define data types.
 2. **STRING**: The **STRING** data type is a sequence of unicode characters
    encoded as UTF-8, up to 255 bytes when encoded. 
 3. **HASH**: The **HASH** data type is a sequence of alphanumeric characters
-   containing a cryptographic hash. It is 64 bytes long.
+   containing a hexadecimal cryptographic hash. It is 64 bytes long.
+3. **SIGNATUREHEX**: The **SIGNATUREHEX** data type is a sequence of
+   alphanumeric characters containing a hexadecimal cryptographic digest. It is
+   up to 72 bytes long.
 4. **BIRTHDATE**: a date of birth, in
    [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601).
    Example:
@@ -65,16 +68,16 @@ cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdb
 
 
 ## QR Code Specifications
-All QR codes contain a data set and a cryptographic signature. The
-cryptographic signature is a SHA256 digest in hexadecimal form, calculated using
-the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA**
-block and the **SIGNATURE** block.
+All QR codes contain a data set and a cryptographic signature. The cryptographic
+signature is a SHA256 digest in hexadecimal form, calculated using the private
+ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block
+and the **SIGNATURE** block.
 
 ### Data Ordering
 In the JSON format, blocks and key/value pairs may occur in any order. For
-example, a JSON document with the **DATA** block after the **SIGNATURE** block is
-equivalent to a document with the **SIGNATURE** block after the **DATA** block.
-Similarly, the key/value pairs within a block may appear in any order.
+example, a JSON document with the **DATA** block after the **SIGNATURE** block
+is equivalent to a document with the **SIGNATURE** block after the **DATA**
+block.  Similarly, the key/value pairs within a block may appear in any order.
 
 ### Case Sensitivity
 All fields (keys as well as values) are case-insensitive in both JSON and URI
@@ -98,6 +101,13 @@ to verify the ECDSA signature. For signature verification, devices should
 maintain indexed local key-value stores of approved public keys in PEM format.
 In the example below, the public key used to verify the signature is “1a9” in
 the “cdc” (local key/value) store.
+
+#### Signature Fields
+1. *keyId*: **SHORTSTRING**. a string describing the database and index of the
+   public key to be used when verifying the cryptographic signature of the
+   **DATA** block.
+2. *hex*: **SIGNATUREHEX**. The hexadecimal SHA256 digest ECDSA signature of the
+   **DATA** block, calculated according to the rules above.
 
 Example Signature Block (JSON fragment)
 ```json
