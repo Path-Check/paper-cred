@@ -11,30 +11,35 @@ PathCheck Vaccination Credential pre-printed card.
 ### Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which
 are defined as follows:
-1. **COUPON**: the **COUPON** QR code is designated to communicate eligibility for
-   vaccination.
-1. **BADGE**: the **BADGE** QR code is designated to contain information about the
-   vaccines received by the **HOLDER**.
-1. **STATUS**: the **STATUS** QR code is designated to contain information about the
-   vaccination status of the **HOLDER**.
-1. **PASSKEY**: the **PASSKEY** QR code contains information that can be correlated with other identification carried by the HOLDER to authenticate them.
-1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated, and is holding a pre-printed vaccination credential card.
-1. **ISSUER**: The **ISSUER** is the party who delivers the vaccine and credential to a **HOLDER**.
+1. **COUPON**: the **COUPON** QR code is designated to communicate eligibility
+   for vaccination.
+1. **BADGE**: the **BADGE** QR code is designated to contain information about
+   the vaccines received by the **HOLDER**.
+1. **STATUS**: the **STATUS** QR code is designated to contain information about
+   the vaccination status of the **HOLDER**.
+1. **PASSKEY**: the **PASSKEY** QR code contains information that can be
+   correlated with other identification carried by the HOLDER to authenticate
+   them.
+1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated,
+   and is holding a pre-printed vaccination credential card.
+1. **ISSUER**: The **ISSUER** is the party who delivers the vaccine and
+   credential to a **HOLDER**.
 
 ### Data Types
 This document will use the following terms to define data types.
 
-1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0 and
-   99999999.
-2. **STRING**: The **STRING** data type is a sequence of UTF-8 characters, up to
-   255 bytes.
+1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0
+   and 99999999, inclusive.
+2. **STRING**: The **STRING** data type is a sequence of unicode characters
+   encoded as UTF-8, up to 255 bytes when encoded. 
 3. **HASH**: The **HASH** data type is a sequence of alphanumeric characters
    containing a cryptographic hash. It is 64 bytes long.
 4. **BIRTHDATE**: a date of birth, in
    [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601).
    Example:
    `20200201` is 1 February, 2020.
-5. **SHORTSTRING**: a **STRING** which is limited to 8 bytes instead of 255.
+5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8
+   bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 
 ## Data Formats
@@ -78,10 +83,21 @@ in mixed case. When performing operations such as hash comparison, a
 case-insensitive comparison function MUST be used.
 
 ### Signature and Hash Verification
-Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be reversed before signature or hash verification.
+Due to the Alphanumeric QR code character set, cryptographic signatures and
+hashes MUST be calculated against uppercased versions of the underlying data.
+Data to be used for hashes is serialized in the specified order. Signatures
+should be calculated against the actual data and order encoded to QR to permit
+signature verification. In some cases, Percent encoding is used to address QR
+code character set limitations. This encoding should be reversed before
+signature or hash verification.
 
 ### Format of the **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a keyId referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store.
+The signature block contains the hexadecimal ECDSA signature digest of the
+prepared **DATA** block and a keyId referencing the database and public key used
+to verify the ECDSA signature. For signature verification, devices should
+maintain indexed local key-value stores of approved public keys in PEM format.
+In the example below, the public key used to verify the signature is “1a9” in
+the “cdc” (local key/value) store.
 
 Example Signature Block (JSON fragment)
 ```json
@@ -105,6 +121,8 @@ Fields:
     1. When the city name contains characters which cannot be encoded to QR, the
        city name may be Percent Encoded as part of QR Code generation. Readers
        must decode any substitutions prior to signature verification.
+    1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the
+       city name should be truncated until its length does not exceed 255 bytes.
 5. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 6. *indicator*: **SHORTSTRING**. an indication of the priority assignment for
    **HOLDER**, or the literal string "none" if there is no priority assignment.
@@ -113,7 +131,8 @@ Fields:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-2. The elements MUST be concatenated in the following order:
+2. The elements MUST be concatenated in the following order, with the ctrl-^
+   (character code 30, hex 1E, RS, or Record Separator) delimiter:
     1. number
     2. total
     3. city
@@ -128,9 +147,10 @@ Thus, the SHA256 hash of the data in the example below would be calculated as
 in the following pseudo-code:
 
 ```
-hash(“${number}${total}${city}${phase}${indicator}”) 
-== hash(“37500BOSTON1BTEACHER”)
--> “710183e3780fed3c48fce4b38da83775a7c47e9961b4a7ee822628e8c190359e”
+hash(“${number}\x1E${total}\x1E${city}\x1E${phase}\x1E${indicator}”) 
+== hash(“37\x1E5000\x1EBOSTON\x1E1B\x1ETEACHER”)
+-> “5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487”
+TODO: recalculate hash
 ```
 
 JSON example:
@@ -176,9 +196,9 @@ JSON example:
   "type": "badge",
   "version": 1,
   "data": {
-    "coupon": "710183e3780fed3c48fce4b38da83775a7c47e9961b4a7ee822628e8c190359e",
+    "coupon": "5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487",
     "doseInfo": "1 PFIZER 13a056+2 PFIZER 29a063",
-    "passkey": "e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6"
+    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
   },
   "signature": {
     "keyId": "cdc:1a9",
@@ -208,7 +228,7 @@ JSON example:
   "version": 1,
   "data": {
     "vaccinated": 2,
-    "passkey": "e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6"
+    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
   },
   "signature": {
     "keyId": "cdc:1a9",
@@ -224,6 +244,8 @@ Fields:
    communicated in this QR code.
 2. *name*: **STRING**. The full name of the **HOLDER**, to be used when
    authenticating the **HOLDER**.
+    1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
+       should be truncated until its length does not exceed 255 bytes.
 3. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when
    authenticating the **HOLDER**.
 4. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH**
@@ -233,7 +255,8 @@ Fields:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the following order:
+1. The elements MUST be concatenated in the following order, with the ctrl-^
+   (character code 30, hex 1E, RS, or Record Separator) delimiter:
     1. name
     1. DoB
     1. salt
@@ -245,8 +268,9 @@ Thus, the SHA256 hash of the data in the example below would be calculated as
 in the following pseudo-code:
 
 ```
-hash(“${name}${DoB}${salt}”) == hash(“JANE DOE190101011BC93AB4AXD3”)
+hash(“${name}\x1E${DoB}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
+TODO: recalculate hash
 ```
 
 JSON example:
