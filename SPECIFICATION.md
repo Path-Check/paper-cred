@@ -46,7 +46,7 @@ cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdb
 
 
 ## QR Code Specifications
-All QR codes contain a data set and a cryptographic signature. The cryptographic signature is a SHA256 digest in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block and the **SIGNATURE** block.
+All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 digest in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block and the **SIGNATURE** block. The type field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
 
 ### Data Ordering
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
@@ -79,7 +79,6 @@ Example Signature Block (JSON fragment)
 
 ### Coupon Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *number*: **NUMERIC**. The unique identifying number assigned to this coupon.
 1. *total*: **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.
 1. *city*: **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
@@ -134,7 +133,6 @@ JSON example:
 
 ### Badge Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *coupon*: **HASH**. The cryptographic hash of the data in the coupon.
 1. *doseInfo*: **DOSEINFO**. Information about the dose or doses received by the **HOLDER**.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
@@ -162,7 +160,6 @@ JSON example:
 
 ### Status Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccine.
    * 1: The **HOLDER** has received the first (of two) dose of a vaccine.
@@ -187,7 +184,6 @@ JSON example:
 
 ### Passkey Specification
 Fields:
-1. *version*: **NUMERIC**. The version of the specification defining the data communicated in this QR code.
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
