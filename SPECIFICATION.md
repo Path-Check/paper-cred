@@ -182,11 +182,11 @@ output with the data in the JSON example:
 ```
 
 ### The **DOSE** Structure
-A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056."
+A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056." In the event of the Vaccine Producer Designation exceeding the storage capacity of SHORTSTRING, only the first eight (8) bytes of the Vaccine Producer Designation should be used. 
 Fields:
 1. Dose ID: **SHORTNUMERIC**.
-1. Vaccine Producer Designation: **STRING**. 
-1. Lot number: **STRING**.
+1. Vaccine Producer Designation: **SHORTSTRING**. 
+1. Lot number: **SHORTSTRING**.
 
 #### **DOSE** Serialization
 1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
