@@ -21,7 +21,7 @@ For the purposes of brevity, this document refers to the following terms which a
 This document will use the following terms to define data types.
 
 1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0 and 99999999, inclusive.
-2. **STRING**: The **STRING** data type is a sequence of unicode characters encoded as UTF-8, up to 255 bytes when encoded. 
+2. **STRING**: The **STRING** data type is a sequence of unicode characters encoded as UTF-8, up to 255 bytes after encoding. All Unicode strings MUST be [NFC Normalized](https://www.unicode.org/faq/normalization.html).
 3. **HASH**: The **HASH** data type is a sequence of alphanumeric characters containing a hexadecimal cryptographic hash. It is 64 bytes long.
 3. **SIGNATUREHEX**: The **SIGNATUREHEX** data type is a sequence of alphanumeric characters containing a hexadecimal cryptographic digest. It is up to 72 bytes long.
 4. **BIRTHDATE**: a date of birth, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
@@ -29,11 +29,11 @@ This document will use the following terms to define data types.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 
 ## General Offline Credential Data Format
-All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 digest in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The two blocks are designated the **DATA** block and the **SIGNATURE** block. The type field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
+All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
 
 Data represented in QR codes can be encoded in the following formats:
 1. [JSON](https://json.org) Format. When data length is not at issue, this format is simple to read and parse.
-2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are [Percent Encoded](https://en.wikipedia.org/wiki/Percent-encoding).
+2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
 
 With URI format, payload is organized according to the following URI schema:
 ```
@@ -86,7 +86,7 @@ signature verification. In some cases, Percent encoding is used to address QR
 code character set limitations. This encoding should be reversed before signature or hash verification.
 
 ### Format of the **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a keyId referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store.
+The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
 
 #### Signature Fields
 1. *keyId*: **SHORTSTRING**. a string describing the database and index of the
@@ -110,7 +110,7 @@ Fields:
 1. *city*: **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
     1. When the city name contains characters which cannot be encoded to QR, the city name may be Percent Encoded as part of QR Code generation. Readers
     must decode any substitutions prior to signature verification.
-    1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the city name should be truncated until its length does not exceed 255 bytes.
+    1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the last Unicode code point is removed until the resulting encoding is less than or equal to 255 bytes.
 1. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 1. *indicator*: **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
 
@@ -124,7 +124,8 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the f
     1. Phase
     1. Indicator
 1. The concatenation should be a UTF-8 string.
-1. The concatenation MUST be converted to uppercase prior to hashing.
+1. The concatenation MUST be converted to uppercase prior to hashing per the
+   rules defined by Unicode, e.g. á is converted to Á.
 1. The elements MUST NOT be URL Encoded prior to hashing.
 1. The output MUST be in hexadecimal format.
 
@@ -162,9 +163,41 @@ Fields:
 1. *doseInfo*: **DOSEINFO**. Information about the dose or doses received by the **HOLDER**.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 
-The **DOSEINFO** structure represents an array of **DOSE**s, delimited by the plus (`+`) character. Example of a **DOSEINFO** structure: `"1 PFIZER 13a056+2 PFIZER 29a063"`
 
-A **DOSE** is a string containing a vaccine producer designation, a lot number, and a dose ID. Example: `"1 PFIZER 13a056"` indicates "Dose 1, from Pfizer, lot number 13a056."
+### The **DOSEINFO** Structure
+The **DOSEINFO** structure is an array of **DOSE**s, delimited by the plus (`+`) character. Example of a **DOSEINFO** structure: `"1 PFIZER 13a056+2 PFIZER 29a063"`
+#### **DOSEINFO** Serialization
+1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
+1. This serialization should be accomplished by joining each serialized **DOSE**
+structure inside the **DOSEINFO** structure.
+1. The elements MUST be concatenated in order with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
+Pseudo-code:
+```
+serialize(DOSEINFO) ::= join("\x1E", [DOSE, DOSE])
+```
+Combined with the **DOSE** serialization below, this would create the following
+output with the data in the JSON example:
+```
+"1\x1DPFIZER\x1D13a056\x1E2\x1DPFIZER\x1D29a063"
+```
+
+### The **DOSE** Structure
+A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056."
+Fields:
+1. Dose ID: **SHORTNUMERIC**.
+1. Vaccine Producer Designation: **STRING**. 
+1. Lot number: **STRING**.
+
+#### **DOSE** Serialization
+1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
+1. This serialization should be accomplished by joining each serialized **DOSE**
+structure inside the **DOSEINFO** structure.
+1. The elements MUST be concatenated in order with the ctrl-] (character code 29, hex 1D, GS, or Group Separator) delimiter.
+Pseudo-code:
+```
+serialize(DOSE) ::= join("\x1D", [1, "PFIZER", "13a056"])
+-> "1\x1DPFIZER\x1D13a056"
+```
 
 JSON example:
 ```json
@@ -173,7 +206,7 @@ JSON example:
   "version": 1,
   "data": {
     "coupon": "5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487",
-    "doseInfo": "1 PFIZER 13a056+2 PFIZER 29a063",
+    "doseInfo": [[1, "PFIZER", "13a056"], [2, "PFIZER", "29a063"]],
     "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
   },
   "signature": {
@@ -186,9 +219,9 @@ JSON example:
 ## Status Payload Specification
 Fields:
 1. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
-   * 0: The **HOLDER** has not received any vaccine.
-   * 1: The **HOLDER** has received the first (of two) dose of a vaccine.
-   * 2: The **HOLDER** has received the second (of two) dose of a vaccine.
+   * 0: The **HOLDER** has not received any vaccination.
+   * 1: The **HOLDER** has started, but not completed, a course of vaccination.
+   * 2: The **HOLDER** has completed the full vaccination course.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
 
 JSON example:
