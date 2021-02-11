@@ -24,7 +24,7 @@ This document will use the following terms to define data types.
 2. **STRING**: The **STRING** data type is a sequence of unicode characters encoded as UTF-8, up to 255 bytes after encoding. All Unicode strings MUST be [NFC Normalized](https://www.unicode.org/faq/normalization.html).
 3. **HASH**: The **HASH** data type is a sequence of alphanumeric characters containing a hexadecimal cryptographic hash. It is 64 bytes long.
 3. **SIGNATUREHEX**: The **SIGNATUREHEX** data type is a sequence of alphanumeric characters containing a hexadecimal cryptographic digest. It is up to 72 bytes long.
-4. **BIRTHDATE**: a date of birth, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
+4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 
@@ -245,7 +245,7 @@ Fields:
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
-1. *DoB*: **BIRTHDATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *DoB*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
 ### Hashing Rules:
