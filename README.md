@@ -35,6 +35,11 @@ The PassKey contains personally identifiable information. It's what links all ot
 
 The Status QR Code contains only one field: vaccinated or not. This QR Code is ideal to use as a check-in credential that verifies the user has been vaccinated, without revealing anymore more information about the vaccine or the user itself. 
 
+## Background
+
+* [MIT Safepargs, IDEO and PathCheck work on Paper Credentials](https://github.com/Path-Check/vaccine-diary)
+
+
 # Protocol Releases
 
 ## V1
