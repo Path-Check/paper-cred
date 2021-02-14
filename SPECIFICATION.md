@@ -33,19 +33,37 @@ All QR codes contain a type, a version, a payload and a cryptographic signature.
 
 Data represented in QR codes can be encoded in the following formats:
 1. [JSON](https://json.org) Format. When data length is not at issue, this format is simple to read and parse.
-2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
+2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
 
 With URI format, payload is organized according to the following URI schema:
 ```
 cred:type:version:signatureHex@keyId?payload
 ```
+The payload should be represented as a series of percent-encoded values delimited by the slash (`/`) character.
+Example (with URI Compression, below):
 
-Example:
 ```
-cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?number=37&total=5000&city=San%20Francisco&phase=1B&indicator=Teacher
+cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?37/5000/San%20Francisco/1B/Teacher
+```
+Pseudo-Code describing assembly of the URI is below. 
+
+```
+$payload ::= [$number, $total, $city, $phase, $indicator];
+for ($i ::= 0; $i < length($payload); $i += 1) do
+  $upcasedValue ::= upcase($payload[$i]);
+  $encodedValue ::= percentEncode($payload[$i]);
+  $payload[$i] ::= $encodedValue;
+end
+
+$payloadString ::= join("/", $payload);
+$signatureHex ::= ecdsaSign($payloadString);
+$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "@" + $keyId;
+$upcasedBase ::= upcase($base);
+
+$uri ::= $upcasedBase + "?" + $payloadString;
 ```
 
-With the Json format, the payload is organized in the following schema: 
+With the Json format, the payload is organized in the following schema:
 ```json
 {
   "type": "",
@@ -63,7 +81,7 @@ JSON example:
   "data": {
     "number": 37,
     "total": 5000,
-    "city": "Boston",
+    "city": "San Francisco",
     "phase": "1B",
     "indicator": "Teacher"
   },
@@ -73,6 +91,8 @@ JSON example:
   }
 }
 ```
+### URI Compression
+To reduce data size, URI payloads are serialized after each field has been encoded. Serialization order is defined in each QR payload specification and key names are omitted.
 
 ### Data Ordering
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
@@ -113,16 +133,17 @@ Fields:
     1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the last Unicode code point is removed until the resulting encoding is less than or equal to 255 bytes.
 1. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 1. *indicator*: **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
-
+### Coupon Serialization Order:
+In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
+1. Number
+1. Total
+1. City
+1. Phase
+1. Indicator
 ### Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the following order, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
-    1. Number
-    1. Total
-    1. City
-    1. Phase
-    1. Indicator
+1. The elements MUST be concatenated in the order defined in the Coupon Serialization Order section of the specification, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing per the
    rules defined by Unicode, e.g. á is converted to Á.
@@ -132,10 +153,14 @@ When generating a passkey hash (for inclusion in the **BADGE** structure), the f
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```
-hash(“${number}\x1E${total}\x1E${city}\x1E${phase}\x1E${indicator}”) 
+$fields ::= [$number, $total, $city, $phase, $indicator];
+for ($i ::= 0; $i < length($fields); $i += 1) do
+  $uppercasedValue ::= upcase($fields[$i]);
+  $fields[$i] ::= $uppercasedValue;
+end
+hash(join("\x1E", $fields))
 == hash(“37\x1E5000\x1EBOSTON\x1E1B\x1ETEACHER”)
 -> “5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487”
-TODO: recalculate hash
 ```
 
 JSON example:
@@ -146,7 +171,7 @@ JSON example:
   "data": {
     "number": 37,
     "total": 5000,
-    "city": "Boston",
+    "city": "San Francisco",
     "phase": "1B",
     "indicator": "Teacher"
   },
@@ -182,10 +207,10 @@ output with the data in the JSON example:
 ```
 
 ### The **DOSE** Structure
-A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056." In the event of the Vaccine Producer Designation exceeding the storage capacity of SHORTSTRING, only the first eight (8) bytes of the Vaccine Producer Designation should be used. 
+A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056." In the event of the Vaccine Producer Designation exceeding the storage capacity of SHORTSTRING, only the first eight (8) bytes of the Vaccine Producer Designation should be used.
 Fields:
 1. Dose ID: **SHORTNUMERIC**.
-1. Vaccine Producer Designation: **SHORTSTRING**. 
+1. Vaccine Producer Designation: **SHORTSTRING**.
 1. Lot number: **SHORTSTRING**.
 
 #### **DOSE** Serialization
@@ -198,6 +223,12 @@ Pseudo-code:
 serialize(DOSE) ::= join("\x1D", [1, "PFIZER", "13a056"])
 -> "1\x1DPFIZER\x1D13a056"
 ```
+
+### Badge Serialization Order:
+In situations requiring payload serialization, the fields in the Badge payload MUST be serialized in the following order:
+1. coupon
+2. doseinfo
+3. passkey
 
 JSON example:
 ```json
@@ -224,6 +255,11 @@ Fields:
    * 2: The **HOLDER** has completed the full vaccination course.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
 
+### Status Serialization Order:
+In situations requiring payload serialization, the fields in the Status payload MUST be serialized in the following order:
+1. vaccinated
+2. passkey
+
 JSON example:
 ```json
 {
@@ -248,14 +284,17 @@ Fields:
 1. *DoB*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
-### Hashing Rules:
+### Passkey Serialization Order:
+In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
+1. Name
+2. DoB
+3. Salt
+
+### Passkey Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
 following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the following order, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
-    1. Name
-    1. DoB
-    1. Salt
+1. The elements MUST be concatenated in the order defined in the Passkey Serialization Order section,, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be URL encoded prior to hashing.
@@ -265,7 +304,6 @@ Thus, the SHA256 hash of the data in the example below would be calculated as in
 ```
 hash(“${name}\x1E${DoB}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
-TODO: recalculate hash
 ```
 
 JSON example:
