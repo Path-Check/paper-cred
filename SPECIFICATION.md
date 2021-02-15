@@ -27,6 +27,7 @@ This document will use the following terms to define data types.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
+7. **PHONE**: a E.164 formatted phone number as string. 
 
 ## General Offline Credential Data Format
 All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
@@ -282,13 +283,15 @@ Fields:
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
 1. *dob*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *phone* (optional): **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
 ### Passkey Serialization Order:
 In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
 1. Name
 2. DoB
-3. Salt
+3. Phone
+4. Salt
 
 ### Passkey Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
@@ -302,7 +305,7 @@ following rules MUST be followed to generate consistent results:
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```
-hash(“${name}\x1E${DoB}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
+hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
 ```
 
@@ -313,8 +316,8 @@ JSON example:
   "version": 1,
   "data": {
     "name": "Jane Doe",
-    "DoB": 19010101,
     "dob": 19010101,
+    "phone": "+16170000000",
     "salt": "1Bc93ab4axd3"
   },
   "signature": {
