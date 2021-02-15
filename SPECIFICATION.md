@@ -185,31 +185,32 @@ JSON example:
 
 ## Badge Payload Specification
 Fields:
+
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
 1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
 1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
-1. *route* (optional): **SHORTSTRING**. The route of application
-1.1. C38238	INTRADERMAL
-1.1. C28161	INTRAMUSCULAR
-1.1. C38276	INTRAVENOUS
-1.1. C38284	NASAL
-1.1. C38288	ORAL
-1.1. C38676	PERCUTANEOUS
-1.1. C38299	SUBCUTANEOUS
-1.1. C38305	TRANSDERMAL
-1. *site* (optional): **SHORTSTRING**. The site of the application. Options are 
-1.1. LA:	Left Arm
-1.1. LD:	Left Deltoid
-1.1. LG:	Left Gluteus Medius
-1.1. LLFA:	Left Lower Forearm
-1.1. LT:	Left Thigh
-1.1. LVL:	Left Vastus Lateralis
-1.1. RA:	Right Arm
-1.1. RD:	Right Deltoid
-1.1. RG:	Right Gluteus Medius
-1.1. RLFA:	Right Lower Forearm
-1.1. RT:	Right Thigh
-1.1. RVL:	Right Vastus Lateralis
+1. *route* (optional): **SHORTSTRING**. The route of application. Options are: 
+   1. C38238	INTRADERMAL
+   1. C28161	INTRAMUSCULAR
+   1. C38276	INTRAVENOUS
+   1. C38284	NASAL
+   1. C38288	ORAL
+   1. C38676	PERCUTANEOUS
+   1. C38299	SUBCUTANEOUS
+   1. C38305	TRANSDERMAL
+1. *site* (optional): **SHORTSTRING**. The site of the application. Options are: 
+   1. LA:	Left Arm
+   1. LD:	Left Deltoid
+   1. LG:	Left Gluteus Medius
+   1. LLFA:	Left Lower Forearm
+   1. LT:	Left Thigh
+   1. LVL:	Left Vastus Lateralis
+   1. RA:	Right Arm
+   1. RD:	Right Deltoid
+   1. RG:	Right Gluteus Medius
+   1. RLFA:	Right Lower Forearm
+   1. RT:	Right Thigh
+   1. RVL:	Right Vastus Lateralis
 1. *dose* (optional): **NUMERIC**. A dose size in ml. 
 1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
 1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
