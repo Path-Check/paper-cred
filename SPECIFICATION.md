@@ -281,7 +281,7 @@ Fields:
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
-1. *DoB*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *dob*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
 ### Passkey Serialization Order:
@@ -314,6 +314,7 @@ JSON example:
   "data": {
     "name": "Jane Doe",
     "DoB": 19010101,
+    "dob": 19010101,
     "salt": "1Bc93ab4axd3"
   },
   "signature": {
