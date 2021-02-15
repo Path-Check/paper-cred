@@ -185,11 +185,10 @@ JSON example:
 
 ## Badge Payload Specification
 Fields:
-1. *vaccinee*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
 1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
 1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
-1. *route*: **SHORTSTRING**. The route of application
+1. *route* (optional): **SHORTSTRING**. The route of application
 1.1. C38238	INTRADERMAL
 1.1. C28161	INTRAMUSCULAR
 1.1. C38276	INTRAVENOUS
@@ -198,7 +197,7 @@ Fields:
 1.1. C38676	PERCUTANEOUS
 1.1. C38299	SUBCUTANEOUS
 1.1. C38305	TRANSDERMAL
-1. *site*: **SHORTSTRING**. The site of the application. Options are 
+1. *site* (optional): **SHORTSTRING**. The site of the application. Options are 
 1.1. LA:	Left Arm
 1.1. LD:	Left Deltoid
 1.1. LG:	Left Gluteus Medius
@@ -211,49 +210,20 @@ Fields:
 1.1. RLFA:	Right Lower Forearm
 1.1. RT:	Right Thigh
 1.1. RVL:	Right Vastus Lateralis
-1. *dose*: **NUMERIC**. A dose size in ml. 
-1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose), []
-
-### The **DOSEINFO** Structure
-The **DOSEINFO** structure is an array of **DOSE**s, delimited by the plus (`+`) character. Example of a **DOSEINFO** structure: `"1 PFIZER 13a056+2 PFIZER 29a063"`
-#### **DOSEINFO** Serialization
-1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
-1. This serialization should be accomplished by joining each serialized **DOSE**
-structure inside the **DOSEINFO** structure.
-1. The elements MUST be concatenated in order with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
-Pseudo-code:
-```
-serialize(DOSEINFO) ::= join("\x1E", [DOSE, DOSE])
-```
-Combined with the **DOSE** serialization below, this would create the following
-output with the data in the JSON example:
-```
-"1\x1DPFIZER\x1D13a056\x1E2\x1DPFIZER\x1D29a063"
-```
-
-### The **DOSE** Structure
-A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056." In the event of the Vaccine Producer Designation exceeding the storage capacity of SHORTSTRING, only the first eight (8) bytes of the Vaccine Producer Designation should be used.
-Fields:
-1. Dose ID: **SHORTNUMERIC**.
-1. Vaccine Producer Designation: **SHORTSTRING**.
-1. Lot number: **SHORTSTRING**.
-
-#### **DOSE** Serialization
-1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
-1. This serialization should be accomplished by joining each serialized **DOSE**
-structure inside the **DOSEINFO** structure.
-1. The elements MUST be concatenated in order with the ctrl-] (character code 29, hex 1D, GS, or Group Separator) delimiter.
-Pseudo-code:
-```
-serialize(DOSE) ::= join("\x1D", [1, "PFIZER", "13a056"])
--> "1\x1DPFIZER\x1D13a056"
-```
+1. *dose* (optional): **NUMERIC**. A dose size in ml. 
+1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
+1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 
 ### Badge Serialization Order:
-In situations requiring payload serialization, the fields in the Badge payload MUST be serialized in the following order:
-1. coupon
-2. doseinfo
-3. passkey
+In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
+1. Manuf
+1. Product
+1. Lot
+1. Route
+1. Site
+1. dose
+1. boosts
+1. passkey
 
 JSON example:
 ```json
@@ -261,8 +231,13 @@ JSON example:
   "type": "badge",
   "version": 1,
   "data": {
-    "coupon": "5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487",
-    "doseInfo": [[1, "PFIZER", "13a056"], [2, "PFIZER", "29a063"]],
+    "manuf" : "Moderna",
+    "product" : "Covid19",
+    "lot": ":23092",
+    "route": "RA",
+    "site": "C28161",
+    "dose": 0.5,
+    "boosts" : [], 
     "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
   },
   "signature": {
