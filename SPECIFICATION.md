@@ -11,7 +11,7 @@ PathCheck Vaccination Credential pre-printed card.
 ### Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **COUPON**: The **COUPON** QR code is designated to communicate eligibility for vaccination.
-1. **BADGE**: The **BADGE** QR code is designated to contain information about the vaccines received by the **HOLDER**.
+1. **BADGE**: The **BADGE** QR code is designated to contain information about a vaccination event received by the **HOLDER**.
 1. **STATUS**: The **STATUS** QR code is designated to contain information about the vaccination status of the **HOLDER**.
 1. **PASSKEY**: The **PASSKEY** QR code contains information that can be correlated with other identification carried by the HOLDER to authenticate them.
 1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated, and is holding a pre-printed vaccination credential card.
