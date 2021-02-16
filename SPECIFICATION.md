@@ -27,7 +27,7 @@ This document will use the following terms to define data types.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
-7. **PHONE**: a E.164 formatted phone number as string. 
+7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters. 
 
 ## General Offline Credential Data Format
 All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
