@@ -2,7 +2,7 @@
 ## Printed Card Specification Version 1
 ### Status
 This document is a DRAFT, written by Justin Dossey
-<justin.dossey@newcontext.com> and Vitor Pamplona
+<justin.dossey@pathcheck.org> and Vitor Pamplona
 <vitor.pamplona@pathcheck.org>.
 The official version of this specification is hosted on GitHub in the [Paper
 Cred](https://github.com/Path-Check/paper-cred) repository.
