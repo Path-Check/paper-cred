@@ -2,7 +2,11 @@
 ## Printed Card Specification Version 1
 ### Status
 This document is a DRAFT, written by Justin Dossey
-<justin.dossey@newcontext.com>.
+<justin.dossey@newcontext.com> and Vitor Pamplona
+<vitor.pamplona@pathcheck.org>.
+The official version of this specification is hosted on GitHub in the [Paper
+Cred](https://github.com/Path-Check/paper-cred) repository.
+While the specification is a DRAFT, it may change frequently!
 
 ### Purpose
 This document describes the data fields and format of the inputs to the
@@ -31,39 +35,16 @@ This document will use the following terms to define data types.
 
 ## General Offline Credential Data Format
 All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
+Data represented in QR codes can be encoded in JSON and URI formats, described in this document.
 
-Data represented in QR codes can be encoded in the following formats:
-1. [JSON](https://json.org) Format. When data length is not at issue, this format is simple to read and parse.
-2. URI Format. When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
+### Case Sensitivity
+All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used. Note that the Alphanumeric QR Code character set does not include lowercase characters, so implementations MUST encode output in uppercase only.
 
-With URI format, payload is organized according to the following URI schema:
-```
-cred:type:version:signatureHex@keyId?payload
-```
-The payload should be represented as a series of percent-encoded values delimited by the slash (`/`) character.
-Example (with URI Compression, below):
+### Signature and Hash Verification
+Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be reversed before signature or hash verification.
 
-```
-cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?37/5000/San%20Francisco/1B/Teacher
-```
-Pseudo-Code describing assembly of the URI is below. 
-
-```
-$payload ::= [$number, $total, $city, $phase, $indicator];
-for ($i ::= 0; $i < length($payload); $i += 1) do
-  $upcasedValue ::= upcase($payload[$i]);
-  $encodedValue ::= percentEncode($payload[$i]);
-  $payload[$i] ::= $encodedValue;
-end
-
-$payloadString ::= join("/", $payload);
-$signatureHex ::= ecdsaSign($payloadString);
-$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "@" + $keyId;
-$upcasedBase ::= upcase($base);
-
-$uri ::= $upcasedBase + "?" + $payloadString;
-```
-
+### [JSON](https://json.org) Format
+When data length is not at issue, this format is simple to read and parse.
 With the Json format, the payload is organized in the following schema:
 ```json
 {
@@ -73,8 +54,11 @@ With the Json format, the payload is organized in the following schema:
   "signature": {}
 }
 ```
+#### JSON Data Ordering
+In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
 
-JSON example:
+
+#### JSON Example
 ```json
 {
   "type": "coupon",
@@ -92,22 +76,45 @@ JSON example:
   }
 }
 ```
-### URI Compression
+
+### URI Format
+When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
+
+#### Serializing Optional Fields on the URI format
+Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. (e.g. given fields A (required), B (optional), C (optional) with values 1 2 3, the implementation MUST output `1/2/3`, but A only MUST be `1`, A and B MUST be `1/2`, A and C MUST be `1//3`.
+
+#### URI Schema
+With URI format, payload is organized according to the following URI schema:
+```
+cred:type:version:signatureHex@keyId?payload
+```
+The payload should be represented as a series of percent-encoded values delimited by the slash (`/`) character.
+
 To reduce data size, URI payloads are serialized after each field has been encoded. Serialization order is defined in each QR payload specification and key names are omitted.
 
-### Data Ordering
-In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
+#### URI Example
 
-### Case Sensitivity
-All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used.
+```
+cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?37/5000/San%20Francisco/1B/Teacher
+```
 
-### Optional Fields on the URI format
-Unfilled fields must be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. (e.g. given fields A (required), B (optional), C (optional) with values 1 2 3, the implementation must output ```1/2/3```, but A only must be ```1```, A and B must be ```1/2```, A and C must be ```1//3```.
+Pseudo-Code describing assembly of the URI:
 
-### Signature and Hash Verification
-Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit
-signature verification. In some cases, Percent encoding is used to address QR
-code character set limitations. This encoding should be reversed before signature or hash verification.
+```
+$payload ::= [$number, $total, $city, $phase, $indicator];
+for ($i ::= 0; $i < length($payload); $i += 1) do
+  $upcasedValue ::= upcase($payload[$i]);
+  $encodedValue ::= percentEncode($payload[$i]);
+  $payload[$i] ::= $encodedValue;
+end
+
+$payloadString ::= join("/", $payload);
+$signatureHex ::= ecdsaSign($payloadString);
+$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "@" + $keyId;
+$upcasedBase ::= upcase($base);
+
+$uri ::= $upcasedBase + "?" + $payloadString;
+```
 
 ### Format of the **SIGNATURE** Block
 The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
@@ -144,28 +151,6 @@ In situations requiring data serialization, the fields in the Coupon payload MUS
 1. City
 1. Phase
 1. Indicator
-### Hashing Rules:
-When generating a passkey hash (for inclusion in the **BADGE** structure), the following rules MUST be followed to generate consistent results:
-1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the order defined in the Coupon Serialization Order section of the specification, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter:
-1. The concatenation should be a UTF-8 string.
-1. The concatenation MUST be converted to uppercase prior to hashing per the
-   rules defined by Unicode, e.g. á is converted to Á.
-1. The elements MUST NOT be URL Encoded prior to hashing.
-1. The output MUST be in hexadecimal format.
-
-Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
-
-```
-$fields ::= [$number, $total, $city, $phase, $indicator];
-for ($i ::= 0; $i < length($fields); $i += 1) do
-  $uppercasedValue ::= upcase($fields[$i]);
-  $fields[$i] ::= $uppercasedValue;
-end
-hash(join("\x1E", $fields))
-== hash(“37\x1E5000\x1EBOSTON\x1E1B\x1ETEACHER”)
--> “5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487”
-```
 
 JSON example:
 ```json
@@ -186,7 +171,7 @@ JSON example:
 }
 ```
 
-## Badge Payload Specification
+## **BADGE** Payload Specification
 Fields:
 
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
@@ -218,8 +203,8 @@ Fields:
    1. RVL:	Right Vastus Lateralis
 1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters). 
 
-### Badge Serialization Order:
-In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
+### **BADGE** Serialization Order
+In situations requiring data serialization, the fields in the **BADGE** payload MUST be serialized in the following order:
 1. Manuf
 1. Product
 1. Lot
@@ -251,7 +236,7 @@ JSON example:
 }
 ```
 
-## Status Payload Specification
+## **STATUS** Payload Specification
 Fields:
 1. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccination.
@@ -259,8 +244,8 @@ Fields:
    * 2: The **HOLDER** has completed the full vaccination course.
 1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
 
-### Status Serialization Order:
-In situations requiring payload serialization, the fields in the Status payload MUST be serialized in the following order:
+### **STATUS** Serialization Order:
+In situations requiring payload serialization, the fields in the **STATUS** payload MUST be serialized in the following order:
 1. vaccinated
 2. passkey
 
@@ -280,7 +265,7 @@ JSON example:
 }
 ```
 
-## Passkey Payload Specification
+## **PASSKEY** Payload Specification
 Fields:
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
@@ -289,22 +274,21 @@ Fields:
 1. *phone* (optional): **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
-### Passkey Serialization Order:
+### **PASSKEY** Serialization Order
 In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
 1. Name
 1. DoB
 1. Salt
 1. Phone (Optional)
 
-### Passkey Hashing Rules:
-When generating a passkey hash (for inclusion in the **BADGE** structure), the
-following rules MUST be followed to generate consistent results:
+### **PASSKEY** Hashing Rules
+When generating a passkey hash, the following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the order defined in the Passkey Serialization Order section,, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
+1. The elements MUST be concatenated in the order defined in the **PASSKEY** Serialization Order section, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
-1. The elements MUST NOT be URL encoded prior to hashing.
-1. The output MUST be in hexadecimal format.
+1. The elements MUST NOT be Percent Encoded prior to hashing.
+1. The output hash MUST be a SHA256 hash in hexadecimal format.
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```
