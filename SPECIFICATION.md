@@ -320,8 +320,8 @@ JSON example:
   "data": {
     "name": "Jane Doe",
     "dob": 19010101,
-    "phone": "+16170000000",
-    "salt": "1Bc93ab4axd3"
+    "salt": "1Bc93ab4axd3",
+    "phone": "16170000000",
   },
   "signature": {
     "keyId": "cdc:1a9",
