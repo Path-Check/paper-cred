@@ -11,7 +11,7 @@ PathCheck Vaccination Credential pre-printed card.
 ### Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **COUPON**: The **COUPON** QR code is designated to communicate eligibility for vaccination.
-1. **BADGE**: The **BADGE** QR code is designated to contain information about the vaccines received by the **HOLDER**.
+1. **BADGE**: The **BADGE** QR code is designated to contain information about a vaccination event received by the **HOLDER**.
 1. **STATUS**: The **STATUS** QR code is designated to contain information about the vaccination status of the **HOLDER**.
 1. **PASSKEY**: The **PASSKEY** QR code contains information that can be correlated with other identification carried by the HOLDER to authenticate them.
 1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated, and is holding a pre-printed vaccination credential card.
@@ -27,6 +27,7 @@ This document will use the following terms to define data types.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
+7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters. 
 
 ## General Offline Credential Data Format
 All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
@@ -99,6 +100,9 @@ In the JSON format, blocks and key/value pairs may occur in any order. For examp
 
 ### Case Sensitivity
 All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used.
+
+### Optional Fields on the URI format
+Unfilled fields must be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. (e.g. given fields A (required), B (optional), C (optional) with values 1 2 3, the implementation must output ```1/2/3```, but A only must be ```1```, A and B must be ```1/2```, A and C must be ```1//3```.
 
 ### Signature and Hash Verification
 Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit
@@ -184,51 +188,48 @@ JSON example:
 
 ## Badge Payload Specification
 Fields:
-1. *coupon*: **HASH**. The cryptographic hash of the data in the coupon.
-1. *doseInfo*: **DOSEINFO**. Information about the dose or doses received by the **HOLDER**.
-1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 
-
-### The **DOSEINFO** Structure
-The **DOSEINFO** structure is an array of **DOSE**s, delimited by the plus (`+`) character. Example of a **DOSEINFO** structure: `"1 PFIZER 13a056+2 PFIZER 29a063"`
-#### **DOSEINFO** Serialization
-1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
-1. This serialization should be accomplished by joining each serialized **DOSE**
-structure inside the **DOSEINFO** structure.
-1. The elements MUST be concatenated in order with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
-Pseudo-code:
-```
-serialize(DOSEINFO) ::= join("\x1E", [DOSE, DOSE])
-```
-Combined with the **DOSE** serialization below, this would create the following
-output with the data in the JSON example:
-```
-"1\x1DPFIZER\x1D13a056\x1E2\x1DPFIZER\x1D29a063"
-```
-
-### The **DOSE** Structure
-A **DOSE** is an array containing a dose ID, a vaccine producer designation, and a lot number. Example: `[1, "PFIZER", "13a056"]` indicates "Dose 1, from Pfizer, lot number 13a056." In the event of the Vaccine Producer Designation exceeding the storage capacity of SHORTSTRING, only the first eight (8) bytes of the Vaccine Producer Designation should be used.
-Fields:
-1. Dose ID: **SHORTNUMERIC**.
-1. Vaccine Producer Designation: **SHORTSTRING**.
-1. Lot number: **SHORTSTRING**.
-
-#### **DOSE** Serialization
-1. For URI formats, the **DOSEINFO** structure must be serialized to a string.
-1. This serialization should be accomplished by joining each serialized **DOSE**
-structure inside the **DOSEINFO** structure.
-1. The elements MUST be concatenated in order with the ctrl-] (character code 29, hex 1D, GS, or Group Separator) delimiter.
-Pseudo-code:
-```
-serialize(DOSE) ::= join("\x1D", [1, "PFIZER", "13a056"])
--> "1\x1DPFIZER\x1D13a056"
-```
+1. *date*: **DATE**. The date of vaccination of the **HOLDER**.
+1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
+1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
+1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
+1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
+1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
+1. *route* (optional): **SHORTSTRING**. The route of application. Options are: 
+   1. C38238	INTRADERMAL
+   1. C28161	INTRAMUSCULAR
+   1. C38276	INTRAVENOUS
+   1. C38284	NASAL
+   1. C38288	ORAL
+   1. C38676	PERCUTANEOUS
+   1. C38299	SUBCUTANEOUS
+   1. C38305	TRANSDERMAL
+1. *site* (optional): **SHORTSTRING**. The site of the application. Options are: 
+   1. LA:	Left Arm
+   1. LD:	Left Deltoid
+   1. LG:	Left Gluteus Medius
+   1. LLFA:	Left Lower Forearm
+   1. LT:	Left Thigh
+   1. LVL:	Left Vastus Lateralis
+   1. RA:	Right Arm
+   1. RD:	Right Deltoid
+   1. RG:	Right Gluteus Medius
+   1. RLFA:	Right Lower Forearm
+   1. RT:	Right Thigh
+   1. RVL:	Right Vastus Lateralis
+1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters). 
 
 ### Badge Serialization Order:
-In situations requiring payload serialization, the fields in the Badge payload MUST be serialized in the following order:
-1. coupon
-2. doseinfo
-3. passkey
+In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
+1. Date
+1. Manuf
+1. Product
+1. Lot
+1. Boosts
+1. Passkey
+1. Route (optional)
+1. Site (optional)
+1. Dose (optional)
 
 JSON example:
 ```json
@@ -236,9 +237,15 @@ JSON example:
   "type": "badge",
   "version": 1,
   "data": {
-    "coupon": "5a688b8230705d88b9f3bef1f23e099f8ee140e04c05a8575531808810019487",
-    "doseInfo": [[1, "PFIZER", "13a056"], [2, "PFIZER", "29a063"]],
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
+    "date": 20210102,
+    "manuf" : "Moderna",
+    "product" : "Covid19",
+    "lot": ":23092",
+    "boosts" : [], 
+    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d", 
+    "route": "RA",
+    "site": "C28161",
+    "dose": 500
   },
   "signature": {
     "keyId": "cdc:1a9",
@@ -281,14 +288,16 @@ Fields:
 1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
-1. *DoB*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *dob*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *phone* (optional): **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
 ### Passkey Serialization Order:
 In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
 1. Name
-2. DoB
-3. Salt
+1. DoB
+1. Salt
+1. Phone (Optional)
 
 ### Passkey Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
@@ -302,7 +311,7 @@ following rules MUST be followed to generate consistent results:
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```
-hash(“${name}\x1E${DoB}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
+hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
 ```
 
@@ -313,8 +322,9 @@ JSON example:
   "version": 1,
   "data": {
     "name": "Jane Doe",
-    "DoB": 19010101,
-    "salt": "1Bc93ab4axd3"
+    "dob": 19010101,
+    "salt": "1Bc93ab4axd3",
+    "phone": "16170000000",
   },
   "signature": {
     "keyId": "cdc:1a9",
