@@ -31,7 +31,7 @@ This document will use the following terms to define data types.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
-7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters. 
+7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters.
 
 ## General Offline Credential Data Format
 All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
@@ -56,6 +56,24 @@ With the Json format, the payload is organized in the following schema:
 ```
 #### JSON Data Ordering
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block.  Similarly, the key/value pairs within a block may appear in any order.
+
+#### Format of the **SIGNATURE** Block
+The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
+
+#### Signature Fields
+1. *keyId*: **SHORTSTRING**. a string describing the database and index of the
+   public key to be used when verifying the cryptographic signature of the
+   **DATA** block.
+2. *hex*: **SIGNATUREHEX**. The hexadecimal SHA256 digest ECDSA signature of the
+   **DATA** block, calculated according to the rules above.
+
+Example Signature Block (JSON fragment)
+```json
+"signature": {
+    "keyId": "cdc:1a9",
+   "hex": "3045022100f239e3cc363a0ef44a72c3458ea69620375b0875c541b3e1e4973c0d14bd4b4b02205aec76cb66eafbd0ec232c55cd95248cfa80e01dfd71ecbce7afc3196cdf178d"
+}
+```
 
 
 #### JSON Example
@@ -116,23 +134,6 @@ $upcasedBase ::= upcase($base);
 $uri ::= $upcasedBase + "?" + $payloadString;
 ```
 
-### Format of the **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. For signature verification, devices should maintain indexed local key-value stores of approved public keys in PEM format. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
-
-#### Signature Fields
-1. *keyId*: **SHORTSTRING**. a string describing the database and index of the
-   public key to be used when verifying the cryptographic signature of the
-   **DATA** block.
-2. *hex*: **SIGNATUREHEX**. The hexadecimal SHA256 digest ECDSA signature of the
-   **DATA** block, calculated according to the rules above.
-
-Example Signature Block (JSON fragment)
-```json
-"signature": {
-    "keyId": "cdc:1a9",
-   "hex": "3045022100f239e3cc363a0ef44a72c3458ea69620375b0875c541b3e1e4973c0d14bd4b4b02205aec76cb66eafbd0ec232c55cd95248cfa80e01dfd71ecbce7afc3196cdf178d"
-}
-```
 
 ## Coupon Payload Specification
 Fields:
@@ -176,11 +177,11 @@ Fields:
 
 1. *date*: **DATE**. The date of vaccination of the **HOLDER**.
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
-1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
-1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
+1. *product*: **SHORTSTRING**. The name of the product of the vaccine.
+1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine.
 1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
 1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
-1. *route* (optional): **SHORTSTRING**. The route of application. Options are: 
+1. *route* (optional): **SHORTSTRING**. The route of application. Options are:
    1. C38238	INTRADERMAL
    1. C28161	INTRAMUSCULAR
    1. C38276	INTRAVENOUS
@@ -189,7 +190,7 @@ Fields:
    1. C38676	PERCUTANEOUS
    1. C38299	SUBCUTANEOUS
    1. C38305	TRANSDERMAL
-1. *site* (optional): **SHORTSTRING**. The site of the application. Options are: 
+1. *site* (optional): **SHORTSTRING**. The site of the application. Options are:
    1. LA:	Left Arm
    1. LD:	Left Deltoid
    1. LG:	Left Gluteus Medius
@@ -202,7 +203,7 @@ Fields:
    1. RLFA:	Right Lower Forearm
    1. RT:	Right Thigh
    1. RVL:	Right Vastus Lateralis
-1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters). 
+1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters).
 
 ### **BADGE** Serialization Order
 In situations requiring data serialization, the fields in the **BADGE** payload MUST be serialized in the following order:
@@ -226,8 +227,8 @@ JSON example:
     "manuf" : "Moderna",
     "product" : "Covid19",
     "lot": ":23092",
-    "boosts" : [], 
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d", 
+    "boosts" : [],
+    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d",
     "route": "RA",
     "site": "C28161",
     "dose": 500
