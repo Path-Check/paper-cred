@@ -23,9 +23,9 @@ The 4 QR Codes designed for vaccinations procedures create a possibility of sele
 
 The distribution of a vaccination coupon signifies the beginning of the vaccination process. When everyone is given a vaccination coupon the fear and anxiety around the vaccination process and when and if someone will be vaccinated is alleviated. By starting the patient journey with the distribution of the vaccination coupon, everyone has more peace of mind with the knowledge that they are on the list to be vaccinated, and that they can play an active role in the process. The coupon only has information about the vaccination phase this user has been approved for and nothing else. 
 
-## The Badge QR Code
+## The Badge QR Code(s)
 
-The badge contains information about the vaccination itself. It's a full health record, including vaccine brand, dosage, site, etc. It is signed by the vaccination provider and serves as a Verifiable Credential informing that the user in the badge was vaccinated under those conditions. This QR Code should be shown when the User goes to see his Primary Care Provider or other health care professionals that need to see the details of his procedure. 
+The badges contain information about the vaccination itself. Each badge QR code is a full health record for a single vaccination event, including vaccine brand, dosage, site, etc. It is signed by the vaccination provider and serves as a Verifiable Credential informing that the user in the badge was vaccinated under those conditions. If the User receives multiple doses, there will be one badge per dose. These QR Codes should be shown when the User goes to see their Primary Care Provider or other health care professional needing to see the details of the vaccination procedure(s). 
 
 ## The Passkey QR Code
 
