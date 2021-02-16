@@ -174,6 +174,7 @@ JSON example:
 ## **BADGE** Payload Specification
 Fields:
 
+1. *date*: **DATE**. The date of vaccination of the **HOLDER**.
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
 1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
 1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
@@ -205,6 +206,7 @@ Fields:
 
 ### **BADGE** Serialization Order
 In situations requiring data serialization, the fields in the **BADGE** payload MUST be serialized in the following order:
+
 1. Manuf
 1. Product
 1. Lot
@@ -220,6 +222,7 @@ JSON example:
   "type": "badge",
   "version": 1,
   "data": {
+    "date": 20210102,
     "manuf" : "Moderna",
     "product" : "Covid19",
     "lot": ":23092",
