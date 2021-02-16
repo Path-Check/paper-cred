@@ -192,6 +192,8 @@ Fields:
 1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
 1. *product*: **SHORTSTRING**. The name of the product of the vaccine. 
 1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine. 
+1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
+1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 1. *route* (optional): **SHORTSTRING**. The route of application. Options are: 
    1. C38238	INTRADERMAL
    1. C28161	INTRAMUSCULAR
@@ -215,19 +217,17 @@ Fields:
    1. RT:	Right Thigh
    1. RVL:	Right Vastus Lateralis
 1. *dose* (optional): **NUMERIC**. A dose size in ml. 
-1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
-1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 
 ### Badge Serialization Order:
 In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
 1. Manuf
 1. Product
 1. Lot
-1. Route
-1. Site
-1. dose
-1. boosts
-1. passkey
+1. Boosts
+1. Passkey
+1. Route (optional)
+1. Site (optional)
+1. Dose (optional)
 
 JSON example:
 ```json
@@ -238,11 +238,11 @@ JSON example:
     "manuf" : "Moderna",
     "product" : "Covid19",
     "lot": ":23092",
+    "boosts" : [], 
+    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d", 
     "route": "RA",
     "site": "C28161",
-    "dose": 0.5,
-    "boosts" : [], 
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
+    "dose": 0.5
   },
   "signature": {
     "keyId": "cdc:1a9",
@@ -292,9 +292,9 @@ Fields:
 ### Passkey Serialization Order:
 In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
 1. Name
-2. DoB
-3. Phone
-4. Salt
+1. DoB
+1. Salt
+1. Phone (Optional)
 
 ### Passkey Hashing Rules:
 When generating a passkey hash (for inclusion in the **BADGE** structure), the
