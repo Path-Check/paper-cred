@@ -216,7 +216,7 @@ Fields:
    1. RLFA:	Right Lower Forearm
    1. RT:	Right Thigh
    1. RVL:	Right Vastus Lateralis
-1. *dose* (optional): **NUMERIC**. A dose size in ml. 
+1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters). 
 
 ### Badge Serialization Order:
 In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
@@ -242,7 +242,7 @@ JSON example:
     "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d", 
     "route": "RA",
     "site": "C28161",
-    "dose": 0.5
+    "dose": 500
   },
   "signature": {
     "keyId": "cdc:1a9",
