@@ -101,6 +101,9 @@ In the JSON format, blocks and key/value pairs may occur in any order. For examp
 ### Case Sensitivity
 All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used.
 
+### Optional Fields on the URI format
+Unfilled fields must be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. (e.g. given fields A (required), B (optional), C (optional) with values 1 2 3, the implementation must output ```1/2/3```, but A only must be ```1```, A and B must be ```1/2```, A and C must be ```1//3```.
+
 ### Signature and Hash Verification
 Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit
 signature verification. In some cases, Percent encoding is used to address QR
