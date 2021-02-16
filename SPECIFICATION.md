@@ -104,7 +104,7 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 #### URI Schema
 With URI format, payload is organized according to the following URI schema:
 ```
-cred:type:version:signatureHex@keyId?payload
+cred:type:version:signatureHex.keyId?payload
 ```
 The payload should be represented as a series of percent-encoded values delimited by the slash (`/`) character.
 
@@ -113,7 +113,7 @@ To reduce data size, URI payloads are serialized after each field has been encod
 #### URI Example
 
 ```
-cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94@1a9?37/5000/San%20Francisco/1B/Teacher
+cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94.cdc:1a9?37/5000/San%20Francisco/1B/Teacher
 ```
 
 Pseudo-Code describing assembly of the URI:
@@ -128,7 +128,7 @@ end
 
 $payloadString ::= join("/", $payload);
 $signatureHex ::= ecdsaSign($payloadString);
-$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "@" + $keyId;
+$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "." + $keyId;
 $upcasedBase ::= upcase($base);
 
 $uri ::= $upcasedBase + "?" + $payloadString;
