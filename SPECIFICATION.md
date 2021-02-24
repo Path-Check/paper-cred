@@ -41,7 +41,7 @@ Data represented in QR codes can be encoded in JSON and URI formats, but URI for
 All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used. Note that the Alphanumeric QR Code character set does not include lowercase characters, so implementations MUST encode output in uppercase only.
 
 ### Signature and Hash Verification
-Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be reversed before signature or hash verification.
+Due to the Alphanumeric QR code character set, cryptographic signatures and hashes MUST be calculated against uppercased, Percent Encoded versions of the underlying data. Data to be used for hashes is serialized in the specified order. Signatures should be calculated against the actual data and order encoded to QR to permit signature verification. In some cases, Percent encoding is used to address QR code character set limitations. This encoding should be performed before signature generation and after signature or hash verification.
 
 ### [JSON](https://json.org) Format
 When data length is not at issue, this format is simple to read and parse.
@@ -245,8 +245,8 @@ JSON example:
     "lot": ":23092",
     "boosts" : [],
     "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d",
-    "route": "RA",
-    "site": "C28161",
+    "route": "C28161",
+    "site": "RA",
     "dose": 500
   },
   "signature": {
