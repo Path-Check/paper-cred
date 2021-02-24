@@ -34,8 +34,8 @@ This document will use the following terms to define data types.
 7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters.
 
 ## General Offline Credential Data Format
-All QR codes contain a type, a version, a payload and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload sections are designated the **DATA** block and the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the payload type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
-Data represented in QR codes can be encoded in JSON and URI formats, described in this document.
+All QR codes contain a message with a type, a version, a payload, and a cryptographic signature. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The payload section is designated the **DATA** block and the cryptographic signature is contained in the **SIGNATURE** block. A block is an object containing a number of key-value pairs. The **type** field defines the message type and the **version** is a **NUMERIC** field defining the version of the type communicated in this QR code.
+Data represented in QR codes can be encoded in JSON and URI formats, but URI formats are strongly preferred due to their smaller message size. Examples are in JSON for easier readability but both encodings are described in this document.
 
 ### Case Sensitivity
 All fields (keys as well as values) are case-insensitive in both JSON and URI format. For clarity and ease of reading, examples in this document are given in mixed case. When performing operations such as hash comparison, a case-insensitive comparison function MUST be used. Note that the Alphanumeric QR Code character set does not include lowercase characters, so implementations MUST encode output in uppercase only.
@@ -99,7 +99,14 @@ Example Signature Block (JSON fragment)
 When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
 
 #### Serializing Optional Fields on the URI format
-Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. (e.g. given fields A (required), B (optional), C (optional) with values 1 2 3, the implementation MUST output `1/2/3`, but A only MUST be `1`, A and B MUST be `1/2`, A and C MUST be `1//3`.
+Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. Given fields A (required), B (optional), C (optional) the implementation MUST follow the following example:
+
+| A | B | C | Output |
+|---|---|---|--------|
+| `1` |  |  | `1` |
+| `1` | `2` | | `1/2` |
+| `1` | `2` | `3` | `1/2/3` |
+| `1` |  | `3` | `1//3` |
 
 #### URI Schema
 With URI format, payload is organized according to the following URI schema:
@@ -137,14 +144,14 @@ $uri ::= $upcasedBase + "?" + $payloadString;
 
 ## Coupon Payload Specification
 Fields:
-1. *number*: **NUMERIC**. The unique identifying number assigned to this coupon.
-1. *total*: **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.
-1. *city*: **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
+1. *number*: *Required.* **NUMERIC**. The unique identifying number assigned to this coupon.
+1. *total*: *Required.* **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.
+1. *city*: *Required.* **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
     1. When the city name contains characters which cannot be encoded to QR, the city name may be Percent Encoded as part of QR Code generation. Readers
     must decode any substitutions prior to signature verification.
     1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the last Unicode code point is removed until the resulting encoding is less than or equal to 255 bytes.
-1. *phase*: **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
-1. *indicator*: **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
+1. *phase*: *Required.* **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
+1. *indicator*: *Required.* **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
 ### Coupon Serialization Order:
 In situations requiring data serialization, the fields in the Coupon payload MUST be serialized in the following order:
 1. Number
@@ -175,35 +182,44 @@ JSON example:
 ## **BADGE** Payload Specification
 Fields:
 
-1. *date*: **DATE**. The date of vaccination of the **HOLDER**.
-1. *manuf*: **SHORTSTRING**. The name of the manufacturer of the vaccine
-1. *product*: **SHORTSTRING**. The name of the product of the vaccine.
-1. *lot*: **SHORTSTRING**. The lot number of bottle of the vaccine.
-1. *boosts*: An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
-1. *passkey*: **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
-1. *route* (optional): **SHORTSTRING**. The route of application. Options are:
-   1. C38238	INTRADERMAL
-   1. C28161	INTRAMUSCULAR
-   1. C38276	INTRAVENOUS
-   1. C38284	NASAL
-   1. C38288	ORAL
-   1. C38676	PERCUTANEOUS
-   1. C38299	SUBCUTANEOUS
-   1. C38305	TRANSDERMAL
-1. *site* (optional): **SHORTSTRING**. The site of the application. Options are:
-   1. LA:	Left Arm
-   1. LD:	Left Deltoid
-   1. LG:	Left Gluteus Medius
-   1. LLFA:	Left Lower Forearm
-   1. LT:	Left Thigh
-   1. LVL:	Left Vastus Lateralis
-   1. RA:	Right Arm
-   1. RD:	Right Deltoid
-   1. RG:	Right Gluteus Medius
-   1. RLFA:	Right Lower Forearm
-   1. RT:	Right Thigh
-   1. RVL:	Right Vastus Lateralis
-1. *dose* (optional): **NUMERIC**. A dose size in μL (micro liters).
+1. *date*: *Required.* **DATE**. The date of vaccination of the **HOLDER**.
+1. *manuf*: *Required.* **SHORTSTRING**. The name of the manufacturer of the vaccine
+1. *product*: *Required.* **SHORTSTRING**. The name of the product of the vaccine.
+1. *lot*: *Required.* **SHORTSTRING**. The lot number of bottle of the vaccine.
+1. *boosts*: *Required.* An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
+1. *passkey*: *Required.* **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
+1. *route* *Optional.* **SHORTSTRING**. The route of application. Options are:
+    | Route Code | Meaning |
+    | ----- | ------- |
+    | `C38238` | INTRADERMAL |
+    | `C28161` | INTRAMUSCULAR
+    | `C38276` | INTRAVENOUS |
+    | `C38284` | NASAL |
+    | `C38288` | ORAL |
+    | `C38676` | PERCUTANEOUS |
+    | `C38299` | SUBCUTANEOUS |
+    | `C38305` | TRANSDERMAL |
+1. *site* *Optional.* **SHORTSTRING**. The site of the application. Options are:
+    | Site Code | Meaning |
+    | --------- | ------- |
+    | `LA` | Left Arm |
+    | `LD` | Left Deltoid |
+    | `LG` | Left Gluteus Medius |
+    | `LLFA` | Left Lower Forearm |
+    | `LT` | Left Thigh |
+    | `LVL` | Left Vastus Lateralis |
+    | `RA` | Right Arm |
+    | `RD` | Right Deltoid |
+    | `RG` | Right Gluteus Medius |
+    | `RLFA` | Right Lower Forearm |
+    | `RT` | Right Thigh |
+    | `RVL` | Right Vastus Lateralis |
+1. *dose* *Optional.* **NUMERIC**. A dose size in μL (micro liters).
+
+### *boosts* Serialization
+When serializing *boosts* data, the array should be represented as decimal
+strings joined with plus (`+`) characters. Hence, `[28, 14]` would serialize to
+the string `28+14`.
 
 ### **BADGE** Serialization Order
 In situations requiring data serialization, the fields in the **BADGE** payload MUST be serialized in the following order:
@@ -242,11 +258,11 @@ JSON example:
 
 ## **STATUS** Payload Specification
 Fields:
-1. *vaccinated*: **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
+1. *vaccinated*: *Required.* **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccination.
    * 1: The **HOLDER** has started, but not completed, a course of vaccination.
    * 2: The **HOLDER** has completed the full vaccination course.
-1. *passkey*: **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
+1. *passkey*: *Required.* **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
 
 ### **STATUS** Serialization Order:
 In situations requiring payload serialization, the fields in the **STATUS** payload MUST be serialized in the following order:
@@ -271,12 +287,12 @@ JSON example:
 
 ## **PASSKEY** Payload Specification
 Fields:
-1. *name*: **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *name*: *Required.* **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
     should be truncated until its length does not exceed 255 bytes.
-1. *dob*: **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. *phone* (optional): **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. *salt*: **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
+1. *dob*: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *phone* *Optional.* **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. *salt*: *Required.* **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 
 ### **PASSKEY** Serialization Order
 In situations requiring payload serialization, the fields in the Passkey payload MUST be serialized in the following order:
