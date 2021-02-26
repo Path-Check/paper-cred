@@ -379,7 +379,7 @@ When generating a passkey hash, the following rules MUST be followed to generate
 
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
-```
+```bash
 hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
 -> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
 ```
