@@ -96,17 +96,103 @@ Example Signature Block (JSON fragment)
 ```
 
 ### URI Format
-When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding) .
+When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding). Note that all characters not present in the Alphanumeric QR scheme must be percent encoded.
+
+### Percent Encoding Payload Fields
+All characters not present in the Alphanumeric QR scheme must be percent
+encoded when presented in data fields. RFC 2936 requires percent encoding a
+number of characters, but some of the characters not required to be encoded are
+not included in the Alphanumeric QR character set. As a result, those characters
+MUST also be percent encoded. 
+
+#### Reading the Table
+The columns in the table below indicate encoding requirements for each
+representable character. Any non-listed characters MUST be percent encoded. The
+"RFC 2396" column indicates whether RFC 2396 requires encoding the character.
+The "Alphanumeric QR" column indicates whether the character is missing from the
+Alphanumeric QR character set (thus, requiring encoding). The "Spec" column indicates whether this
+specification requires percent encoding of the character. The "Output Value"
+column indicates the expected output from processing the listed character.
+
+| Character | RFC 2396 | Alphanumeric QR | Spec | Output Value |
+| --------- | -------- | --------------- | ---- | ------------ |
+| ` ` | YES | NO  | YES | `%20` |
+| `!` | YES | YES | YES | `%21` |
+| `"` | YES | YES | YES | `%22` |
+| `#` | YES | YES | YES | `%23` |
+| `$` | YES | NO  | YES | `%24` |
+| `%` | YES | NO  | YES | `%25` |
+| `&` | YES | YES | YES | `%26` |
+| `'` | YES | YES | YES | `%27` |
+| `(` | YES | YES | YES | `%28` |
+| `)` | YES | YES | YES | `%29` |
+| `*` | YES | NO  | YES | `%2A` |
+| `+` | YES | NO  | YES | `%2B` |
+| `,` | YES | YES | YES | `%2C` |
+| `-` | YES | NO  | YES | `%2D` |
+| `.` | YES | NO  | YES | `%2E` |
+| `/` | YES | NO  | YES | `%2F` |
+| `0` | NO  | NO  | NO  | `0`   |
+| `1` | NO  | NO  | NO  | `1`   |
+| `2` | NO  | NO  | NO  | `2`   |
+| `3` | NO  | NO  | NO  | `3`   |
+| `4` | NO  | NO  | NO  | `4`   |
+| `5` | NO  | NO  | NO  | `5`   |
+| `6` | NO  | NO  | NO  | `6`   |
+| `7` | NO  | NO  | NO  | `7`   |
+| `8` | NO  | NO  | NO  | `8`   |
+| `9` | NO  | NO  | NO  | `9`   |
+| `:` | YES | NO  | YES | `%3A` |
+| `;` | YES | YES | YES | `%3B` |
+| `<` | YES | YES | YES | `%3C` |
+| `=` | YES | YES | YES | `%3D` |
+| `>` | YES | YES | YES | `%3E` |
+| `?` | YES | YES | YES | `%3F` |
+| `@` | YES | YES | YES | `%40` |
+| `A` | NO  | NO  | NO  | `A`   |
+| `B` | NO  | NO  | NO  | `B`   |
+| `C` | NO  | NO  | NO  | `C`   |
+| `D` | NO  | NO  | NO  | `D`   |
+| `E` | NO  | NO  | NO  | `E`   |
+| `F` | NO  | NO  | NO  | `F`   |
+| `G` | NO  | NO  | NO  | `G`   |
+| `H` | NO  | NO  | NO  | `H`   |
+| `I` | NO  | NO  | NO  | `I`   |
+| `J` | NO  | NO  | NO  | `J`   |
+| `K` | NO  | NO  | NO  | `K`   |
+| `L` | NO  | NO  | NO  | `L`   |
+| `M` | NO  | NO  | NO  | `M`   |
+| `N` | NO  | NO  | NO  | `N`   |
+| `O` | NO  | NO  | NO  | `O`   |
+| `P` | NO  | NO  | NO  | `P`   |
+| `Q` | NO  | NO  | NO  | `Q`   |
+| `R` | NO  | NO  | NO  | `R`   |
+| `S` | NO  | NO  | NO  | `S`   |
+| `T` | NO  | NO  | NO  | `T`   |
+| `U` | NO  | NO  | NO  | `U`   |
+| `V` | NO  | NO  | NO  | `V`   |
+| `W` | NO  | NO  | NO  | `W`   |
+| `X` | NO  | NO  | NO  | `X`   |
+| `Y` | NO  | NO  | NO  | `Y`   |
+| `Z` | NO  | NO  | NO  | `Z`   |
+| `[` | YES | YES | YES | `%5B` |
+| `\` | YES | YES | YES | `%5C` |
+| `]` | YES | YES | YES | `%5D` |
+| `^` | YES | YES | YES | `%5E` |
+| `_` | NO  | YES | YES | `%5F` |
+| `{` | YES | YES | YES | `%7C` |
+| `}` | YES | YES | YES | `%7D` |
+| `~` | NO  | YES | YES | `%7E` |
 
 #### Serializing Optional Fields on the URI format
 Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. Given fields A (required), B (optional), C (optional) the implementation MUST follow the following example:
 
-| A | B | C | Output |
-|---|---|---|--------|
-| `1` |  |  | `1` |
-| `1` | `2` | | `1/2` |
+| A | B | C | Output        |
+|-----|-----|-----|---------|
+| `1` |     |     | `1`     |
+| `1` | `2` |     | `1/2`   |
 | `1` | `2` | `3` | `1/2/3` |
-| `1` |  | `3` | `1//3` |
+| `1` |     | `3` | `1//3`  |
 
 #### URI Schema
 With URI format, payload is organized according to the following URI schema:
