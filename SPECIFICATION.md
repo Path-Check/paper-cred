@@ -1,16 +1,11 @@
-# PathCheck Vaccination Credential
-## Printed Card Specification Version 1
-### Status
-This document is a DRAFT, written by Justin Dossey
-<justin.dossey@pathcheck.org> and Vitor Pamplona
-<vitor.pamplona@pathcheck.org>.
-The official version of this specification is hosted on GitHub in the [Paper
-Cred](https://github.com/Path-Check/paper-cred) repository.
-While the specification is a DRAFT, it may change frequently!
+# PathCheck Vaccination Credential - Version 1
+**© 2021 PathCheck Foundation**<br/>
+Authors: [Justin Dosse](mailto:justin.dossey@pathcheck.org) and [Vitor Pamplona](vitor.pamplona@pathcheck.org)<br/>
+Status: *DRAFT*<br/>
+Date: Feb 26, 2021<br/>
 
-### Purpose
-This document describes the data fields and format of the inputs to the
-PathCheck Vaccination Credential pre-printed card.
+## Purpose
+This document describes the format and data fields to PathCheck's Verifiable Credential QR Code stickers for the off-line vaccination user journey.
 
 ### Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
