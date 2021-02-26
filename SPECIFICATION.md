@@ -40,7 +40,12 @@ All QR codes contain a message with:
 1. the reference to a public key
 1. and a cryptographic signature of the payload
 
-The **type** field defines the payload type (coupon, passkey, badge, status) and the **version** is a **NUMERIC** field defining the version of the type of certificate in this QR code. The payload section contains if information related to the certificate itself. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. 
+The **type** field defines the payload type (coupon, passkey, badge, status) and the **version** is a **NUMERIC** field defining the version of the type of certificate in this QR code. The payload section contains if information related to the certificate itself. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The Public Key can be: 
+1. a URI to a DNS TXT Record containing the key for download.
+1. a URL address to download keys from. 
+1. a database and key ID to facilitate trusted lists of issuers. 
+
+For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
 
 Data represented in QR codes can be encoded in JSON and URI formats, but URI formats are strongly preferred due to their smaller message size. Examples are in JSON for easier readability but both encodings are described in this document.
 
@@ -59,15 +64,6 @@ Percent encoding is used to address QR code character set limitations.
 * Cryptographic signatures and hashes *MUST* be calculated against *uppercased*, *percent encoded* versions of the underlying payload.
 * Data to be used for hashes is serialized in the specified order this document describes. 
 * Signatures should be calculated against the final format and order encoded in the payload field of the QR to permit signature verification before any decoding.
-
-## Public Key 
-
-The Public Key can: 
-1. a URI to a DNS TXT Record containing the key for download.
-1. a URL address to download keys from. 
-1. a database and key ID to facilitate trusted lists of issuers. 
-
-For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
 
 # The JSON Format
 
