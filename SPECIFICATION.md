@@ -223,7 +223,7 @@ column indicates the expected output from processing the listed character.
 
 ## Pseudo-Code describing assembly of the URI:
 
-```
+```bash
 $payload ::= [$number, $total, $city, $phase, $indicator];
 for ($i ::= 0; $i < length($payload); $i += 1) do
   $upcasedValue ::= upcase($payload[$i]);
