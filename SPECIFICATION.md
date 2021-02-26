@@ -63,7 +63,7 @@ Percent encoding is used to address QR code character set limitations.
 
 ## Signing and Hashing Constraints
 
-* Cryptographic signatures and hashes *MUST* be calculated against *uppercased*, *percent encoded* versions of the underlying payload.
+* Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload.
 * Data to be used for hashes is serialized in the specified order this document describes. 
 * Signatures should be calculated against the final format and order encoded in the payload field of the QR to permit signature verification before any decoding.
 
@@ -85,7 +85,7 @@ The payload section is designated the **DATA** block and the cryptographic signa
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block. Similarly, the key/value pairs within a block may appear in any order.
 
 ## The **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is “1a9” in the “cdc” (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
+The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
 
 1. *keyId*: **SHORTSTRING**. a string describing the database and index, the url to download the PEM, or the DNS TXT record of the
    public key to be used when verifying the cryptographic signature of the **DATA** block.
@@ -113,7 +113,7 @@ With URI format, payload is organized according to the following URI schema star
 ```
 cred:type:version:signatureHex.keyId?payload
 ```
-The payload should be represented as a series of uppercased, percent-encoded values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted.
+The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted.
 
 ## URI Example
 
@@ -145,8 +145,8 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 
 The columns in the table below indicate encoding requirements for each
 representable character. Any non-listed characters MUST be percent encoded. The
-"URI" column indicates whether the URI format rules (RFC 2396) requires encoding the character.
-The "Alphanumeric QR" column indicates whether the character is missing from the
+"URI Requires" column indicates whether the URI format rules (RFC 2396) requires encoding the character.
+The "Alphanumeric QR Requires" column indicates whether the character is missing from the
 Alphanumeric QR character set (thus, requiring encoding). The "Must Encode?" column indicates whether this
 specification requires percent encoding of the character. The "Output Value"
 column indicates the expected output from processing the listed character.
@@ -248,7 +248,7 @@ Fields in the **serialization** order:
     must decode any substitutions prior to signature verification.
     1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the last Unicode code point is removed until the resulting encoding is less than or equal to 255 bytes.
 1. `phase`: *Required.* **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
-1. `indicator`: *Required.* **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string "none" if there is no priority assignment.
+1. `indicator`: *Required.* **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string `"none"` if there is no priority assignment.
 
 ## JSON example:
 ```json
@@ -276,7 +276,7 @@ Fields in the **serialization** order:
 1. `manuf`: *Required.* **SHORTSTRING**. The name of the manufacturer of the vaccine
 1. `product`: *Required.* **SHORTSTRING**. The name of the product of the vaccine.
 1. `lot`: *Required.* **SHORTSTRING**. The lot number of bottle of the vaccine.
-1. `boosts`: *Required.* An array of **SHORTNUMERIC** representing the distance in days from the first dose. Ex, for Moderna's (two doses): [28], for JnJ (just one dose): []
+1. `boosts`: *Required.* An array of **SHORTNUMERIC** representing the distance in days from the first dose (e.g. Moderna's two doses: `[28]`, for JnJ's just one dose: `[]`)
 1. `passkey`: *Required.* **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
 1. `route` *Optional.* **SHORTSTRING**. The route of application. Options are:
     | Route Code | Meaning |
@@ -341,7 +341,7 @@ Fields in the **serialization** order:
    * 0: The **HOLDER** has not received any vaccination.
    * 1: The **HOLDER** has started, but not completed, a course of vaccination.
    * 2: The **HOLDER** has completed the full vaccination course.
-1. `passkey`: *Required.* **HASH**. The cryptographic hash of the data in the Passkey, as defined by the Passkey Specification.
+1. `passkey`: *Required.* **HASH**. The cryptographic hash of the data in the **Passkey**, as defined by the **Passkey** Specification.
 
 ## JSON example:
 ```json
@@ -362,8 +362,7 @@ Fields in the **serialization** order:
 # **PASSKEY** Payload
 Fields in the **serialization** order:
 1. `name`: *Required.* **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
-    1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name
-    should be truncated until its length does not exceed 255 bytes.
+    1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name should be truncated until its length does not exceed 255 bytes.
 1. `dob`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. `salt`: *Required.* **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
 1. `phone` *Optional.* **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
@@ -371,7 +370,7 @@ Fields in the **serialization** order:
 ## Hashing Rules
 When generating a passkey hash, the following rules MUST be followed to generate consistent results:
 1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the order defined in the **PASSKEY** Serialization Order section, with the ctrl-^ (character code 30, hex 1E, RS, or Record Separator) delimiter.
+1. The elements MUST be concatenated in the order defined in the **PASSKEY** Serialization Order section, with the `ctrl-^` (character code `30`, hex `1E`, `RS`, or Record Separator) delimiter.
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be Percent Encoded prior to hashing.
