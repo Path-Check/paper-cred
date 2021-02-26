@@ -34,13 +34,15 @@ This document will use the following terms to define data types.
 
 # General Structure
 All QR codes contain a message with: 
-1. the type of certificate
-1. the version
-1. the payload itself
-1. the reference to a public key
-1. and a cryptographic signature of the payload
+1. the **type** of certificate
+1. the **version**
+1. the **payload** itself
+1. the reference to a **public key**
+1. and a cryptographic **signature** of the payload
 
-The **type** field defines the payload type (coupon, passkey, badge, status) and the **version** is a **NUMERIC** field defining the version of the type of certificate in this QR code. The payload section contains if information related to the certificate itself. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. The Public Key can be: 
+The **type** field defines the payload type (`COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. 
+
+The reference to the **public** key can be: 
 1. a URI to a DNS TXT Record containing the key for download.
 1. a URL address to download keys from. 
 1. a database and key ID to facilitate trusted lists of issuers. 
