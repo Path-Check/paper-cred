@@ -5,7 +5,7 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
-This document describes the format and data fields to PathCheck's Verifiable Credential QR Code stickers for the off-line vaccination user journey.
+This document describes the format and data fields to PathCheck's Verifiable Credential QR Code for the off-line vaccination user journey.
 
 # Introduction
 
