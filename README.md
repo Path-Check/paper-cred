@@ -1,6 +1,6 @@
 # Paper-first Verifiable Vaccination Credentials using QR Codes
 
-We present a Verifiable Credentials specification for COVID-19 testing and vaccination workflows using digitally signed QR Code stickers on paper cards. Due to its physical nature and simplicity, digitally-signed QR codes may be a convenient and nonintrusive modality for some users seeking vaccination while enabling verification of paper-based user-controlled immunization records. The protocol expects the verifier app to be off-line and that the user doesn't need anything more than a Paper Card (no electronic devices on the user side). All personally identifiable information, contact and health information are stored on the QR Codes themselves, allowing a user to go through the vaccination procedures in a Peer-to-Peer fashion, without the need to ever transfer the user's information to any centralized, private, or public blockchain system. The proposed system improves the efficiency, privacy, equity, and effectiveness by augmenting the existing protocols to work with fully off-line information flows. 
+We present a Verifiable Credentials specification for COVID-19 testing and vaccination workflows using digitally-signed QR Code stickers on paper cards. Due to its physical nature and simplicity, QR codes may be a convenient and nonintrusive modality for some users seeking vaccination while enabling verification of paper-based user-controlled immunization records. The protocol expects the verifier app to be off-line and that the user doesn't need anything more than a Paper Card (no electronic devices). All personally identifiable information, contact, and health information are stored on the QR Codes themselves, allowing a user to go through the vaccination procedures in a Peer-to-Peer fashion, without the need to ever transfer the user's information to any centralized, private, or public blockchain system. The proposed system improves efficiency, privacy, equity, and effectiveness by augmenting the existing protocols to work with fully off-line information flows. 
 
 <p align="center"><img src="https://github.com/Path-Check/vaccine-diary/blob/main/Resources/card_visualization.gif" alt="App_gif" width="650" style="margin: auto"/></p>
 
@@ -28,7 +28,7 @@ Main Benefits are
     1. Theft-proof: An attacker in possession of a Holder's credentials cannot use them for presentation to another party.
 1. Small: 
     1. Complete QR-code payloads range between 100 and 200 bytes, ideal for low-end and feature phones
-    1. It's ideal to cheaply transfer the payload via SMS
+    1. It is ideal to cheaply transfer the payload via SMS
 1. Private with selective disclosure: 
     1. Users can easily choose which attributes to present and withhold the rest
     1. No centralized PII, no exposure to government, private companies
@@ -39,17 +39,17 @@ Main Benefits are
 1. Negligible Cost per User
 1. Generalizable: Any record/payload can be created and signed in the same format
 1. Modular: Add QR Codes to app/computers for additional features
-    1. Scheduling, Reminders, Backups, Self-reporting, etc...
+    1. Scheduling, Reminders, Backups, Self-reporting, etc
 1. OpenSource Specifications under MIT License
 
 Disadvantages are: 
 1. Traceability of the QR Codes is possible by colluding verifiers
     1. Solutions include generating multiple salted QR Codes to be given away as opposed to one code that is read everywhere
 1. Chance of losing the card, losing the data
-    1. The issuer might have a copy of the event record, but it's not a requirement
+    1. The issuer might have a copy of the event record, but it is not a requirement
     1. Apps and pictures of the card can serve as a backup
 1. No Revocation of cards/credentials 
-    1. The only option is to remove the public key from database, invalidating all certificates
+    1. The only option is to remove the public key from the database, invalidating all certificates
 1. Card information itself is not encrypted
     1. The only information security feature is on the tri-fold mechanism of the paper card
 
