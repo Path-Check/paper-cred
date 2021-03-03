@@ -91,5 +91,6 @@ The Status QR Code contains only one field: vaccinated or not. This QR Code is i
 * [Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
 * [Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
 * [Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
+* [Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
 
 # Contributing
