@@ -45,7 +45,7 @@ The **type** field defines the payload type (`COUPON`, `PASSKEY`, `BADGE` or `ST
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
 1. a URL address to download keys from. 
-1. a database and key ID to facilitate trusted lists of issuers (TODO: Need to specify this keyId format). 
+1. a database and key ID to facilitate trusted lists of issuers (TODO: Need to specify this keyId database format). 
 
 For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
 
@@ -101,7 +101,7 @@ The signature block contains the Base32URL ECDSA signature digest of the prepare
 {
   "type": "coupon",
   "version": 1,
-  "data": { ... },
+  "data": { },
   "signature": {
     "keyId": "1a9.cdc",
     "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
