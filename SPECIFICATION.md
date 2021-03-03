@@ -25,8 +25,8 @@ For the purposes of brevity, this document refers to the following terms which a
 This document will use the following terms to define data types.
 1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0 and 99999999, inclusive.
 2. **STRING**: The **STRING** data type is a sequence of UTF-8, [NFC Normalized](https://www.unicode.org/faq/normalization.html) characters, up to 255 bytes after encoding.
-3. **HASH**: The **HASH** data type is a sequence of 64 alphanumeric characters containing a hexadecimal hash.
-3. **SIGNATUREHEX**: The **SIGNATUREHEX** data type is a sequence of up-to-72 alphanumeric characters containing a hexadecimal digest.
+3. **HASH**: The **HASH** data type is a sequence of 52 alphanumeric characters containing a base32-encoded hash.
+3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-72 alphanumeric characters containing a base32-encoded digest.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
@@ -40,7 +40,7 @@ All QR codes contain a message with:
 1. the reference to a **public key**
 1. and a cryptographic **signature** of the payload
 
-The **type** field defines the payload type (`COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in hexadecimal form, calculated using the private ECDSA key of the **ISSUER**. 
+The **type** field defines the payload type (`COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
 
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
@@ -85,11 +85,11 @@ The payload section is designated the **DATA** block and the cryptographic signa
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block. Similarly, the key/value pairs within a block may appear in any order.
 
 ## The **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
+The signature block contains the base32 ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
 
 1. *keyId*: **SHORTSTRING**. a string describing the database and index, the url to download the PEM, or the DNS TXT record of the
    public key to be used when verifying the cryptographic signature of the **DATA** block.
-2. *hex*: **SIGNATUREHEX**. The hexadecimal SHA256 digest ECDSA signature of the
+2. *base32*: **SIGNATUREBASE32**. The Base32-encoded SHA256 digest ECDSA signature of the
    **DATA** block, calculated according to the rules above.
 
 ### JSON Example
@@ -100,7 +100,7 @@ The signature block contains the hexadecimal ECDSA signature digest of the prepa
   "data": { ... },
   "signature": {
     "keyId": "1a9.cdc",
-    "hex": "3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
+    "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
   }
 }
 ```
@@ -119,7 +119,7 @@ The payload should be represented as a series of **uppercased**, **percent-encod
 
 The example below is a valid credential
 ```
-cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94:1a9.cdc:37/5000/San%20Francisco/1B/Teacher
+CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:1a9.cdc:37/5000/San%20Francisco/1B/Teacher
 ```
 
 ## Percent Encoding Payload Fields
@@ -140,6 +140,12 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 | `1` | `2` |     | `1/2`   |
 | `1` | `2` | `3` | `1/2/3` |
 | `1` |     | `3` | `1//3`  |
+
+## Signing Signature 
+
+The cryptographic tool must sign a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload, as found in the URI. Some libraries already perform this hashing and encoding operation, others require developer to force a non-default hash function. 
+
+The resulting signature in Distinguished Encoding Rules (DER) format must be then encoded in Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)), removed the added padding (`=`) and added to the URI.
 
 ## Which Characters Need Encoding?
 
@@ -221,7 +227,7 @@ column indicates the expected output from processing the listed character.
 | `}` | YES | YES | YES | `%7D` |
 | `~` | NO  | YES | YES | `%7E` |
 
-## Pseudo-Code describing assembly of the URI:
+## Pseudo-Code describing signing and assembly of the URI:
 
 ```bash
 $payload ::= [$number, $total, $city, $phase, $indicator];
@@ -232,12 +238,50 @@ for ($i ::= 0; $i < length($payload); $i += 1) do
 end
 
 $payloadString ::= join("/", $payload);
-$signature ::= ecdsaSign($payloadString);
+$payloadHash ::= sha256($payloadString.to("utf-8"));
+
+$signatureDER ::= ecdsaSign($payloadHash);
+
+$signature ::= removePadding(b32encode($signatureDER))
 $base ::= "cred:coupon:" + $version + ":" + $signature + ":" + $keyId;
 $upcasedBase ::= upcase($base);
 
 $uri ::= $upcasedBase + ":" + $payloadString;
 ```
+
+## Pseudo-Code describing parsing and verifying of the URI:
+
+```bash
+[$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
+$payload ::= $payloadString.split('/')
+
+$payloadHash ::= sha256(payload.to("utf-8")))
+$signatureDER ::= b32decode(addPadding($signature))
+
+$valid ::= ecdsaVerify($signatureDER, $payloadHash)
+
+for ($i ::= 0; $i < length($payload); $i += 1) do
+  $payload[$i] ::= percentDecode($payload[$i]);  
+end
+```
+
+## Pseudo-Code describing adding and remove Base32 Padding
+
+To remove padding from Base32-encoded strings do: 
+```bash
+$base32NoPad ::= $base32Str.replaceAll("=", "");
+```
+
+To add padding back to Base32-encoded strings do:
+```bash
+switch ($base32NoPad.length % 8) {
+    case 2: $base32Str ::= $base32NoPad + "======"; break;
+    case 4: $base32Str ::= $base32NoPad + "====";  break;
+    case 5: $base32Str ::= $base32NoPad + "==="; break;
+    case 7: $base32Str ::= $base32NoPad + "="; break;
+    default: $base32Str ::= $base32NoPad;
+}
+```   
 
 # **COUPON** Payload
 Fields in the **serialization** order:
@@ -264,7 +308,7 @@ Fields in the **serialization** order:
   },
   "signature": {
     "keyId": "1a9.cdc",
-    "hex": "3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
+    "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
   }
 }
 ```
@@ -329,7 +373,7 @@ the string `28+14`.
   },
   "signature": {
     "keyId": "1a9.cdc",
-    "hex": "3046022100fdff876e90286a0b06c4181d78b23d5b960cb60a53a94f946b12bbb321ec24c6022100c22e739dfd59b37f8eddc915475190e12f8c10a632560afaab68e498c12de2ac"
+    "base32": "GBDAEIIAVA3PD5GI7GAMSMDJOF3YCN4PS6D4VFD3LODHVFJ5SFUPSOLIFH7QEIIA6JZW6O2WFCBGYCILP6H6Z4FE5FXOQPF2NNIC46BTPJFEXMASNUGA"
   }
 }
 ```
@@ -354,7 +398,7 @@ Fields in the **serialization** order:
   },
   "signature": {
     "keyId": "1a9.cdc",
-    "hex": "304402203210213d35685bed9c9df83218839d0ea1f10cf50e64b0a3a8fbdcfbde0a6bf00220494bfc07481d285d00de9cf5b30a81754314b9cfccb6651597c733cc680ca588"
+    "base32": "GBCAEIBS5LZ5JUYHBF3HGJABGROYE7QCP6YOZKTLDE67INBSVZVDBJ6ZQIBCALCKC3LQBOFB2P7TM4RG26526Z5ANE5Y5CPZAPFLM4XPLLPRJYXG"
   }
 }
 ```
@@ -374,13 +418,13 @@ When generating a passkey hash, the following rules MUST be followed to generate
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
 1. The elements MUST NOT be Percent Encoded prior to hashing.
-1. The output hash MUST be a SHA256 hash in hexadecimal format.
+1. The output hash MUST be a SHA256 hash in base32 format without padding symbols (`=`).
 
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```bash
 hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
--> “e607c3b9b9448403a6b3cddd83f397bd17084c1db6fdeb081e9bd8392f21a1e6”
+-> “FQTQAAKKCWUJMAEXAVZTERQDYX7VQB76M6R7XEAVWBQ6EOSQOZBA”
 ```
 
 ## JSON example:
@@ -396,7 +440,7 @@ hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E1901
   },
   "signature": {
     "keyId": "1a9.cdc",
-    "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94"
+    "base32": "GBCQEID3T2TRWYE6SWG5HIJIUXA6UXL7FHGR5MNSHCIHZ7KMA5PK5KYGWYBCCAHFBSX7T65JTMLFEQGTBISFNWGLKYVKRQOKEX5RN6TUU3R267ZQ7E"
   }
 }
 ```
