@@ -10,6 +10,43 @@ Vaccination coordination is facing daunting challenges. Citizens are expected to
 
 We developed a modification of today's vaccination cards to add 4 signed QR Codes to manage the user journey. The separate QR Codes are intended to decouple the health information (PHI) and personally identifiable information (PII) as well as separate the eligibility verification from the vaccination itself. The card dramatically simplifies phased vaccinations, second dose coordination, reporting of side effects, and credentials while allowing fully privacy-centered systems. It also creates data-rich monitoring of vaccination progress while eliminating red tape, privacy-concerns, and fraud. It is ideally suited for vulnerable populations, rural areas, labor unions of essential workers, and employers helping their own employees.
 
+# Pros and Cons
+
+Main Benefits are
+1. Easy of Learn and Use: 
+    1. Everyone knows how to work with paper
+    1. Holders do not have to remember any secrets at all
+    1. Users carry a minimal additional physical object
+    1. No electronics, no Accounts, no payments
+    1. Error-proof procedure for any age 
+1. Trusted: 
+    1. The signed payload is cryptographically protected and thus impossible to tamper
+    1. Issuers place their public keys on their DNS records, facilitating trust from a known website
+    1. Observation-proof: Signed cards are bound to a person's ID. An attacker cannot impersonate a user after observing them present a credential
+    1. Knowledge-proof: It is not possible for an attacker to impersonate a holder by exploiting knowledge of personal details
+    1. Hack-proof: Nothing a verifier could possibly leak can help an attacker impersonate the user to another verifier
+    1. Theft-proof: An attacker in possession of a Holder's credentials cannot use them for presentation to another party.
+1. Small: 
+    1. Complete QR-code payloads range between 100 and 200 bytes
+    1. It's ideal to cheaply transfer the payload via SMS
+1. Private with selective disclosure: 
+    1. Users can easily choose which attributes to present and withhold the rest
+    1. No centralized PII, no exposure to government, private companies
+    1. No central point of failure
+    1. No need for PII at the vaccination site or at tracking systems
+    1. Protection for vulnerable populations 
+1. Negligible Cost per User
+1. Generalizable: Any record/payload can be created and signed in the same format
+1. Modular: Add QR Codes to app/computers for additional features
+    1. Scheduling, Reminders, Backups, Self-reporting, etc...
+1. OpenSource Specification
+
+Disadvantages are: 
+1. Traceability of the QR Codes is possible by colluding verifiers
+1. Chance of losing the card, losing the data
+1. No Revocation of cards/credentials (only option is to remove the public key from database)
+1. Card information itself is not encrypted
+
 # Patient Journey
 
 The patient journey goes through 3 major stages:
@@ -34,29 +71,6 @@ The PassKey contains personally identifiable information. It's what links all ot
 ## The Status QR Code
 
 The Status QR Code contains only one field: vaccinated or not. This QR Code is ideal to use as a check-in credential that verifies the user has been vaccinated, without revealing anymore more information about the vaccine or the user itself. 
-
-# Pros/Cons
-
-Main Benefits are
-1. Easy: Everyone knows how to work with paper.
-1. Trusted: The signed payload is cryptographically protected and thus impossible to tamper. 
-1. Private: 
-    1. No centralized PII, no exposure to government, private companies. 
-    1. No central point of failure.
-    1. No need for PII at the vaccination site or at tracking systems. 
-    1. Protection for vulnerable populations 
-1. Full Control: Users control a selective disclosure of information
-1. Standardized: Any record can be created and signed
-1. Small: Complete QR-code payloads range between 100 and 200 bytes
-1. Modular: Add QR Codes to app for additional features
-    1. Scheduling, Reminders, Backups, Self-reporting, etc...
-
-Disadvantages are: 
-1. Traceability of the PassKey or the QR Code itself by a large controller of QR Code reading apps.
-1. Chance of losing the card, losing the data
-1. No Revocation of cards/credentials (only option is to remove the public key from database)
-1. Card information itself is not encrypted.
-
 
 ## Background
 
