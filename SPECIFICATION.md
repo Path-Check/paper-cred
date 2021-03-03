@@ -26,7 +26,7 @@ This document will use the following terms to define data types.
 1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0 and 99999999, inclusive.
 2. **STRING**: The **STRING** data type is a sequence of UTF-8, [NFC Normalized](https://www.unicode.org/faq/normalization.html) characters, up to 255 bytes after encoding.
 3. **HASH**: The **HASH** data type is a sequence of 52 alphanumeric characters containing a base32-encoded hash.
-3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-72 alphanumeric characters containing a base32url-encoded digest.
+3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-102 alphanumeric characters containing a base32url-encoded digest.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
