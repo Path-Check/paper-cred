@@ -17,7 +17,7 @@ Main Benefits are
     1. Everyone knows how to work with paper
     1. Holders do not have to remember any secrets at all
     1. Users carry a minimal additional physical object
-    1. No electronics, no Accounts, no payments
+    1. No electronics, no accounts, no payments
     1. Error-proof procedure for any age 
 1. Trusted: 
     1. The signed payload is cryptographically protected and thus impossible to tamper
@@ -27,7 +27,7 @@ Main Benefits are
     1. Hack-proof: Nothing a verifier could possibly leak can help an attacker impersonate the user to another verifier
     1. Theft-proof: An attacker in possession of a Holder's credentials cannot use them for presentation to another party.
 1. Small: 
-    1. Complete QR-code payloads range between 100 and 200 bytes
+    1. Complete QR-code payloads range between 100 and 200 bytes, ideal for low-end and feature phones
     1. It's ideal to cheaply transfer the payload via SMS
 1. Private with selective disclosure: 
     1. Users can easily choose which attributes to present and withhold the rest
@@ -35,19 +35,25 @@ Main Benefits are
     1. No central point of failure
     1. No need for PII at the vaccination site or at tracking systems
     1. Protection for vulnerable populations 
+1. Easy to backup: A picture serves as a backup of the code
 1. Negligible Cost per User
 1. Generalizable: Any record/payload can be created and signed in the same format
 1. Modular: Add QR Codes to app/computers for additional features
     1. Scheduling, Reminders, Backups, Self-reporting, etc...
-1. OpenSource Specification
+1. OpenSource Specifications under MIT License
 
 Disadvantages are: 
 1. Traceability of the QR Codes is possible by colluding verifiers
+    1. Solutions include generating multiple salted QR Codes to be given away as opposed to one code that is read everywhere
 1. Chance of losing the card, losing the data
-1. No Revocation of cards/credentials (only option is to remove the public key from database)
+    1. The issuer might have a copy of the event record, but it's not a requirement
+    1. Apps and pictures of the card can serve as a backup
+1. No Revocation of cards/credentials 
+    1. The only option is to remove the public key from database, invalidating all certificates
 1. Card information itself is not encrypted
+    1. The only information security feature is on the tri-fold mechanism of the paper card
 
-# Patient Journey
+# Patient Vaccination Journey
 
 The patient journey goes through 3 major stages:
 1. Eligibility Check/Scheduling: Vaccination coupon QR codes are distributed to everyone by the appropriate regional vaccination administrator. This can be done either with paper vaccination cards, by SMS, using a web site, or downloading an application. The coupon code behaves as a User ID for the entire vaccination flow. 
