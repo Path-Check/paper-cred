@@ -57,15 +57,19 @@ All fields (keys as well as values) are case-insensitive in both JSON and URI fo
 
 For clarity and ease of reading, examples in this document are given in mixed case. 
 
-## Encoding
+## Payload Percent Encoding
 
-Percent encoding is used to address QR code character set limitations. 
+Percent encoding of the payload is used to address QR code character set limitations, while supporting the URI spec. 
 
-## Signing and Hashing Constraints
+## Base32URL Encoding
 
-* Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload.
-* Data to be used for hashes is serialized in the specified order this document describes. 
-* Signatures should be calculated against the final format and order encoded in the payload field of the QR to permit signature verification before any decoding.
+A version of the Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without padding (Base32URL) is used to encode hashes and signatures. The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
+
+## Signing and Hashing
+
+Data to be used for signing and hashes is serialized in the specified order this document describes. Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
+
+The cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload. The resulting signature in Distinguished Encoding Rules (DER) format must be then encoded in Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)), removed the added padding (`=`) and added to the URI.
 
 # The JSON Format
 
@@ -140,12 +144,6 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 | `1` | `2` |     | `1/2`   |
 | `1` | `2` | `3` | `1/2/3` |
 | `1` |     | `3` | `1//3`  |
-
-## Signing Signature 
-
-The cryptographic tool must sign a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload, as found in the URI. Some libraries already perform this hashing and encoding operation, others require developer to force a non-default hash function. 
-
-The resulting signature in Distinguished Encoding Rules (DER) format must be then encoded in Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)), removed the added padding (`=`) and added to the URI.
 
 ## Which Characters Need Encoding?
 
