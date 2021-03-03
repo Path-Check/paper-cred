@@ -35,6 +35,29 @@ The PassKey contains personally identifiable information. It's what links all ot
 
 The Status QR Code contains only one field: vaccinated or not. This QR Code is ideal to use as a check-in credential that verifies the user has been vaccinated, without revealing anymore more information about the vaccine or the user itself. 
 
+# Pros/Cons
+
+Main Benefits are
+1. Easy: Everyone knows how to work with paper.
+1. Trusted: The signed payload is cryptographically protected and thus impossible to tamper. 
+1. Private: 
+    1. No centralized PII, no exposure to government, private companies. 
+    1. No central point of failure.
+    1. No need for PII at the vaccination site or at tracking systems. 
+    1. Protection for vulnerable populations 
+1. Full Control: Users control a selective disclosure of information
+1. Standardized: Any record can be created and signed
+1. Small: Complete QR-code payloads range between 100 and 200 bytes
+1. Modular: Add QR Codes to app for additional features
+    1. Scheduling, Reminders, Backups, Self-reporting, etc...
+
+Disadvantages are: 
+1. Traceability of the PassKey or the QR Code itself by a large controller of QR Code reading apps.
+1. Chance of losing the card, losing the data
+1. No Revocation of cards/credentials (only option is to remove the public key from database)
+1. Card information itself is not encrypted.
+
+
 ## Background
 
 * [MIT Safepargs, IDEO and PathCheck work on Paper Credentials](https://github.com/Path-Check/vaccine-diary)
