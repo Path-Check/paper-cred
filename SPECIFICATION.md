@@ -26,7 +26,7 @@ This document will use the following terms to define data types.
 1. **NUMERIC**: The **NUMERIC** data type is a sequence of integers between 0 and 99999999, inclusive.
 2. **STRING**: The **STRING** data type is a sequence of UTF-8, [NFC Normalized](https://www.unicode.org/faq/normalization.html) characters, up to 255 bytes after encoding.
 3. **HASH**: The **HASH** data type is a sequence of 52 alphanumeric characters containing a base32-encoded hash.
-3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-72 alphanumeric characters containing a base32-encoded digest.
+3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-72 alphanumeric characters containing a base32url-encoded digest.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
@@ -59,7 +59,7 @@ For clarity and ease of reading, examples in this document are given in mixed ca
 
 ## Payload Percent Encoding
 
-Percent encoding of the payload is used to address QR code character set limitations, while supporting the URI spec. 
+Percent encoding of the upcased payload is used to address QR code character set limitations, while supporting the URI spec. 
 
 ## Base32URL Encoding
 
@@ -89,11 +89,11 @@ The payload section is designated the **DATA** block and the cryptographic signa
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block. Similarly, the key/value pairs within a block may appear in any order.
 
 ## The **SIGNATURE** Block
-The signature block contains the base32 ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
+The signature block contains the Base32URL ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
 
 1. *keyId*: **SHORTSTRING**. a string describing the database and index, the url to download the PEM, or the DNS TXT record of the
    public key to be used when verifying the cryptographic signature of the **DATA** block.
-2. *base32*: **SIGNATUREBASE32**. The Base32-encoded SHA256 digest ECDSA signature of the
+2. *base32*: **SIGNATUREBASE32**. The Base32URL-encoded SHA256 digest ECDSA signature of the
    **DATA** block, calculated according to the rules above.
 
 ### JSON Example
@@ -263,21 +263,21 @@ for ($i ::= 0; $i < length($payload); $i += 1) do
 end
 ```
 
-## Pseudo-Code describing adding and remove Base32 Padding
+## Pseudo-Code describing Base32 to Base32URL Mapping
 
 To remove padding from Base32-encoded strings do: 
 ```bash
-$base32NoPad ::= $base32Str.replaceAll("=", "");
+$base32URL ::= $base32.replaceAll("=", "");
 ```
 
 To add padding back to Base32-encoded strings do:
 ```bash
 switch ($base32NoPad.length % 8) {
-    case 2: $base32Str ::= $base32NoPad + "======"; break;
-    case 4: $base32Str ::= $base32NoPad + "====";  break;
-    case 5: $base32Str ::= $base32NoPad + "==="; break;
-    case 7: $base32Str ::= $base32NoPad + "="; break;
-    default: $base32Str ::= $base32NoPad;
+    case 2: $base32 ::= $base32URL + "======"; break;
+    case 4: $base32 ::= $base32URL + "====";  break;
+    case 5: $base32 ::= $base32URL + "==="; break;
+    case 7: $base32 ::= $base32URL + "="; break;
+    default: $base32 ::= $base32URL;
 }
 ```   
 
