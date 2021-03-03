@@ -62,12 +62,14 @@ Disadvantages are:
 
 * [MIT Safepargs, IDEO and PathCheck work on Paper Credentials](https://github.com/Path-Check/vaccine-diary)
 
-
 # Protocol Releases
 
 ## V1
 
 * [Specification](SPECIFICATION.md)
 * [FAQ](FAQ.md)
+* [Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
+* [Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
+* [Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
 
 # Contributing
