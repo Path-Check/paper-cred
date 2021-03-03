@@ -85,7 +85,7 @@ The payload section is designated the **DATA** block and the cryptographic signa
 In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block. Similarly, the key/value pairs within a block may appear in any order.
 
 ## The **SIGNATURE** Block
-The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The colon character (`:`) is used as a delimiter to separate the key-value store identifier and the key identifier.
+The signature block contains the hexadecimal ECDSA signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the ECDSA signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
 
 1. *keyId*: **SHORTSTRING**. a string describing the database and index, the url to download the PEM, or the DNS TXT record of the
    public key to be used when verifying the cryptographic signature of the **DATA** block.
@@ -99,7 +99,7 @@ The signature block contains the hexadecimal ECDSA signature digest of the prepa
   "version": 1,
   "data": { ... },
   "signature": {
-    "keyId": "cdc:1a9",
+    "keyId": "1a9.cdc",
     "hex": "3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
   }
 }
@@ -111,7 +111,7 @@ When data length is a concern, this format may use fewer bytes than JSON. Keys s
 ## URI Schema
 With URI format, payload is organized according to the following URI schema starting with "cred":
 ```
-cred:type:version:signatureHex.keyId?payload
+cred:type:version:signature:keyId:payload
 ```
 The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted.
 
@@ -119,7 +119,7 @@ The payload should be represented as a series of **uppercased**, **percent-encod
 
 The example below is a valid credential
 ```
-cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94.cdc:1a9?37/5000/San%20Francisco/1B/Teacher
+cred:coupon:1:3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94:1a9.cdc:37/5000/San%20Francisco/1B/Teacher
 ```
 
 ## Percent Encoding Payload Fields
@@ -144,11 +144,11 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 ## Which Characters Need Encoding?
 
 The columns in the table below indicate encoding requirements for each
-representable character. Any non-listed characters MUST be percent encoded. The
+representable character. Any non-listed characters MUST be percent-encoded. The
 "URI Requires" column indicates whether the URI format rules (RFC 2396) requires encoding the character.
 The "Alphanumeric QR Requires" column indicates whether the character is missing from the
 Alphanumeric QR character set (thus, requiring encoding). The "Must Encode?" column indicates whether this
-specification requires percent encoding of the character. The "Output Value"
+specification requires percent-encoding of the character. The "Output Value"
 column indicates the expected output from processing the listed character.
 
 | Character | URI Requires | Alphanumeric QR Requires | Must Encode? | Output Value |
@@ -232,11 +232,11 @@ for ($i ::= 0; $i < length($payload); $i += 1) do
 end
 
 $payloadString ::= join("/", $payload);
-$signatureHex ::= ecdsaSign($payloadString);
-$base ::= "cred:coupon:" + $version + ":" + $signatureHex + "." + $keyId;
+$signature ::= ecdsaSign($payloadString);
+$base ::= "cred:coupon:" + $version + ":" + $signature + ":" + $keyId;
 $upcasedBase ::= upcase($base);
 
-$uri ::= $upcasedBase + "?" + $payloadString;
+$uri ::= $upcasedBase + ":" + $payloadString;
 ```
 
 # **COUPON** Payload
@@ -263,7 +263,7 @@ Fields in the **serialization** order:
     "indicator": "Teacher"
   },
   "signature": {
-    "keyId": "cdc:1a9",
+    "keyId": "1a9.cdc",
     "hex": "3045022100ee898ba22454a92d972bc2573dbdb61b4cddbde9d90b264089d12201c5833e4402205e6c193f608906bdd3b395ead4ddbc602ee3cba08c2fbc5cb95ea9718d68ad2a"
   }
 }
@@ -328,7 +328,7 @@ the string `28+14`.
     "dose": 500
   },
   "signature": {
-    "keyId": "cdc:1a9",
+    "keyId": "1a9.cdc",
     "hex": "3046022100fdff876e90286a0b06c4181d78b23d5b960cb60a53a94f946b12bbb321ec24c6022100c22e739dfd59b37f8eddc915475190e12f8c10a632560afaab68e498c12de2ac"
   }
 }
@@ -353,7 +353,7 @@ Fields in the **serialization** order:
     "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
   },
   "signature": {
-    "keyId": "cdc:1a9",
+    "keyId": "1a9.cdc",
     "hex": "304402203210213d35685bed9c9df83218839d0ea1f10cf50e64b0a3a8fbdcfbde0a6bf00220494bfc07481d285d00de9cf5b30a81754314b9cfccb6651597c733cc680ca588"
   }
 }
@@ -395,7 +395,7 @@ hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E1901
     "phone": "16170000000",
   },
   "signature": {
-    "keyId": "cdc:1a9",
+    "keyId": "1a9.cdc",
     "hex": "3046022100f82e28019428220d47be9b7dc9a50b4f0e6f9a6c95852a9272827cdbd8cb38d2022100b5d8738178cc1a12b590b25933857d967eb10178c5bbe045d132ec2513ddfa94"
   }
 }
