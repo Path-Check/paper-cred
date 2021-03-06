@@ -36,7 +36,7 @@ All QR codes contain a message with:
 1. the reference to a **public key**
 1. and a cryptographic **signature** of the payload
 
-The **type** field defines the payload type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
+The **type** field defines the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
 
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
