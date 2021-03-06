@@ -13,10 +13,6 @@ This specification creates 4 signed QR Codes to manage the user journey. The sep
 
 ## Terms and Definitions
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
-1. **COUPON**: The **COUPON** QR code is designated to communicate eligibility for vaccination.
-1. **BADGE**: The **BADGE** QR code is designated to contain information about a vaccination event received by the **HOLDER**.
-1. **STATUS**: The **STATUS** QR code is designated to contain information about the vaccination status of the **HOLDER**.
-1. **PASSKEY**: The **PASSKEY** QR code contains PII that can be correlated with other identification to authenticate the **HOLDER**.
 1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated, and is holding a pre-printed vaccination credential card.
 1. **ISSUER**: The **ISSUER** is the party who delivers the vaccine and credential to a **HOLDER**.
 
@@ -40,7 +36,7 @@ All QR codes contain a message with:
 1. the reference to a **public key**
 1. and a cryptographic **signature** of the payload
 
-The **type** field defines the payload type (`COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
+The **type** field defines the payload type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
 
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
@@ -117,6 +113,7 @@ With URI format, payload is organized according to the following URI schema star
 ```
 cred:type:version:signature:keyId:payload
 ```
+
 The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted.
 
 ## URI Example
@@ -281,164 +278,4 @@ switch ($base32NoPad.length % 8) {
 }
 ```   
 
-# **COUPON** Payload
-Fields in the **serialization** order:
-1. `number`: *Required.* **NUMERIC**. The unique identifying number assigned to this coupon.
-1. `total`: *Required.* **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.
-1. `city`: *Required.* **STRING**. The name of the city, town, or other local area which designates vaccination eligibility and delivery schedule for the **HOLDER**.
-    1. When the city name contains characters which cannot be encoded to QR, the city name may be Percent Encoded as part of QR Code generation. Readers
-    must decode any substitutions prior to signature verification.
-    1. In the event the city name exceeds 255 bytes when encoded to UTF-8, the last Unicode code point is removed until the resulting encoding is less than or equal to 255 bytes.
-1. `phase`: *Required.* **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
-1. `indicator`: *Required.* **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string `"none"` if there is no priority assignment.
 
-## JSON example:
-```json
-{
-  "type": "coupon",
-  "version": 1,
-  "data": {
-    "number": 37,
-    "total": 5000,
-    "city": "San Francisco",
-    "phase": "1B",
-    "indicator": "Teacher"
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
-  }
-}
-```
-
-# **BADGE** Payload
-
-Fields in the **serialization** order:
-1. `date`: *Required.* **DATE**. The date of vaccination of the **HOLDER**.
-1. `manuf`: *Required.* **SHORTSTRING**. The name of the manufacturer of the vaccine
-1. `product`: *Required.* **SHORTSTRING**. The name of the product of the vaccine.
-1. `lot`: *Required.* **SHORTSTRING**. The lot number of bottle of the vaccine.
-1. `boosts`: *Required.* An array of **SHORTNUMERIC** representing the distance in days from the first dose (e.g. Moderna's two doses: `[28]`, for JnJ's just one dose: `[]`)
-1. `passkey`: *Required.* **STRING**. The cryptographic hash of the data in the Passkey, as defined in the Passkey specification.
-1. `route` *Optional.* **SHORTSTRING**. The route of application. Options are:
-    | Route Code | Meaning |
-    | ----- | ------- |
-    | `C38238` | INTRADERMAL |
-    | `C28161` | INTRAMUSCULAR
-    | `C38276` | INTRAVENOUS |
-    | `C38284` | NASAL |
-    | `C38288` | ORAL |
-    | `C38676` | PERCUTANEOUS |
-    | `C38299` | SUBCUTANEOUS |
-    | `C38305` | TRANSDERMAL |
-1. `site` *Optional.* **SHORTSTRING**. The site of the application. Options are:
-    | Site Code | Meaning |
-    | --------- | ------- |
-    | `LA` | Left Arm |
-    | `LD` | Left Deltoid |
-    | `LG` | Left Gluteus Medius |
-    | `LLFA` | Left Lower Forearm |
-    | `LT` | Left Thigh |
-    | `LVL` | Left Vastus Lateralis |
-    | `RA` | Right Arm |
-    | `RD` | Right Deltoid |
-    | `RG` | Right Gluteus Medius |
-    | `RLFA` | Right Lower Forearm |
-    | `RT` | Right Thigh |
-    | `RVL` | Right Vastus Lateralis |
-1. `dose` *Optional.* **NUMERIC**. A dose size in μL (micro liters).
-
-## Boosts Field Serialization
-When serializing `boosts` data, the array should be represented as decimal
-strings joined with plus (`+`) characters. Hence, `[28, 14]` would serialize to
-the string `28+14`.
-
-## JSON example:
-```json
-{
-  "type": "badge",
-  "version": 1,
-  "data": {
-    "date": 20210102,
-    "manuf" : "Moderna",
-    "product" : "Covid19",
-    "lot": ":23092",
-    "boosts" : [],
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d",
-    "route": "C28161",
-    "site": "RA",
-    "dose": 500
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBDAEIIAVA3PD5GI7GAMSMDJOF3YCN4PS6D4VFD3LODHVFJ5SFUPSOLIFH7QEIIA6JZW6O2WFCBGYCILP6H6Z4FE5FXOQPF2NNIC46BTPJFEXMASNUGA"
-  }
-}
-```
-
-# **STATUS** Payload
-
-Fields in the **serialization** order:
-1. `vaccinated`: *Required.* **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
-   * 0: The **HOLDER** has not received any vaccination.
-   * 1: The **HOLDER** has started, but not completed, a course of vaccination.
-   * 2: The **HOLDER** has completed the full vaccination course.
-1. `passkey`: *Required.* **HASH**. The cryptographic hash of the data in the **Passkey**, as defined by the **Passkey** Specification.
-
-## JSON example:
-```json
-{
-  "type": "status",
-  "version": 1,
-  "data": {
-    "vaccinated": 2,
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBCAEIBS5LZ5JUYHBF3HGJABGROYE7QCP6YOZKTLDE67INBSVZVDBJ6ZQIBCALCKC3LQBOFB2P7TM4RG26526Z5ANE5Y5CPZAPFLM4XPLLPRJYXG"
-  }
-}
-```
-
-# **PASSKEY** Payload
-Fields in the **serialization** order:
-1. `name`: *Required.* **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
-    1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name should be truncated until its length does not exceed 255 bytes.
-1. `dob`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. `salt`: *Required.* **STRING**. The cryptographic salt, nonce, or IV used for **HASH** calculation.
-1. `phone` *Optional.* **PHONE**. The phone number of the **HOLDER**, to be used when authenticating the **HOLDER**.
-
-## Hashing Rules
-When generating a passkey hash, the following rules MUST be followed to generate consistent results:
-1. The only elements to be serialized should be the ones in the **DATA** block.
-1. The elements MUST be concatenated in the order defined in the **PASSKEY** Serialization Order section, with the `ctrl-^` (character code `30`, hex `1E`, `RS`, or Record Separator) delimiter.
-1. The concatenation should be a UTF-8 string.
-1. The concatenation MUST be converted to uppercase prior to hashing.
-1. The elements MUST NOT be Percent Encoded prior to hashing.
-1. The output hash MUST be a SHA256 hash in base32 format without padding symbols (`=`).
-
-Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
-
-```bash
-hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
--> “FQTQAAKKCWUJMAEXAVZTERQDYX7VQB76M6R7XEAVWBQ6EOSQOZBA”
-```
-
-## JSON example:
-```json
-{
-  "type": "passkey",
-  "version": 1,
-  "data": {
-    "name": "Jane Doe",
-    "dob": 19010101,
-    "salt": "1Bc93ab4axd3",
-    "phone": "16170000000",
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBCQEID3T2TRWYE6SWG5HIJIUXA6UXL7FHGR5MNSHCIHZ7KMA5PK5KYGWYBCCAHFBSX7T65JTMLFEQGTBISFNWGLKYVKRQOKEX5RN6TUU3R267ZQ7E"
-  }
-}
-```
