@@ -1,4 +1,4 @@
-# PathCheck Vaccination Credential - Version 1
+# Paper-first Verifiable Credentials Format - Version 1
 **© 2021 PathCheck Foundation**<br/>
 Authors: [Justin Dosse](mailto:justin.dossey@pathcheck.org) and [Vitor Pamplona](vitor.pamplona@pathcheck.org)<br/>
 Status: *DRAFT*<br/>
