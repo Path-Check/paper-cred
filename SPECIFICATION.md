@@ -5,13 +5,10 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
-This document describes the format and data fields to PathCheck's Verifiable Credential QR Codes for the off-line vaccination user journey.
-
-# Introduction
-
-This specification creates 4 signed QR Codes to manage the user journey. The separate QR Codes are intended to decouple the health information (PHI) and personally identifiable information (PII) as well as separate vaccination eligibility verification from the excecution of it. 
+This document describes the format to compress Verifiable Credentials into QR Codes.
 
 ## Terms and Definitions
+
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **HOLDER**: The **HOLDER** is the party who has been or will be vaccinated, and is holding a pre-printed vaccination credential card.
 1. **ISSUER**: The **ISSUER** is the party who delivers the vaccine and credential to a **HOLDER**.
@@ -29,6 +26,7 @@ This document will use the following terms to define data types.
 7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters.
 
 # General Structure
+
 All QR codes contain a message with: 
 1. the **type** of certificate
 1. the **version**
@@ -36,7 +34,7 @@ All QR codes contain a message with:
 1. the reference to a **public key**
 1. and a cryptographic **signature** of the payload
 
-The **type** field defines the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
+The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private ECDSA key of the **ISSUER**. 
 
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
@@ -46,6 +44,10 @@ The reference to the **public** key can be:
 For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
 
 Data represented in QR codes can be encoded in JSON and URI formats, but URI formats are strongly preferred due to their smaller message size. Examples are in JSON for easier readability but both encodings are described in this document.
+
+## Payload Types
+
+All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository. Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. 
 
 ## Case Insensitivity
 
