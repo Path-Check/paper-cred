@@ -288,4 +288,6 @@ switch ($base32NoPad.length % 8) {
 * [Signing and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
 * [Signing and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
 
-# 
+# Contributing
+
+[Issues](https://github.com/Path-Check/paper-cred/issues) and [pull requests](https://github.com/Path-Check/paper-cred/pulls) are very welcome! :)
