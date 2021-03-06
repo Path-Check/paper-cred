@@ -1,4 +1,7 @@
 # **PASSKEY** Payload
+
+The **PASSKEY** QR code contains PII that can be correlated with other identification to authenticate the **HOLDER**.
+
 Fields in the **serialization** order:
 1. `name`: *Required.* **STRING**. The full name of the **HOLDER**, to be used when authenticating the **HOLDER**.
     1. In the event the name exceeds 255 bytes when encoded to UTF-8, the name should be truncated until its length does not exceed 255 bytes.

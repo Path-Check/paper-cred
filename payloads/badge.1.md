@@ -1,5 +1,7 @@
 # **BADGE** Payload
 
+The **BADGE** QR code is designated to contain information about a vaccination event received by the **HOLDER**.
+
 Fields in the **serialization** order:
 1. `date`: *Required.* **DATE**. The date of vaccination of the **HOLDER**.
 1. `manuf`: *Required.* **SHORTSTRING**. The name of the manufacturer of the vaccine

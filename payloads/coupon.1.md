@@ -1,4 +1,7 @@
 # **COUPON** Payload
+
+The **COUPON** QR code is designated to communicate eligibility for vaccination.
+
 Fields in the **serialization** order:
 1. `number`: *Required.* **NUMERIC**. The unique identifying number assigned to this coupon.
 1. `total`: *Required.* **NUMERIC**. The total number of coupons issued in the batch of coupons this one was issued from.

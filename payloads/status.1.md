@@ -1,5 +1,7 @@
 # **STATUS** Payload
 
+The **STATUS** QR code is designated to contain information about the vaccination status of the **HOLDER**.
+
 Fields in the **serialization** order:
 1. `vaccinated`: *Required.* **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccination.
