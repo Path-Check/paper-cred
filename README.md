@@ -281,5 +281,11 @@ switch ($base32NoPad.length % 8) {
     default: $base32 ::= $base32URL;
 }
 ```   
+## OpenSource Demos and Snippet files. 
 
+* [PathCheck Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
+* [Signing and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
+* [Signing and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
+* [Signing and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
 
+# 
