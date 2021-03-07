@@ -5,7 +5,7 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
-This document describes the format to compress Verifiable Credentials for space-limited applications, such as QR Codes, NFC tags and SMS Messages.
+This document describes the protocol to compress Verifiable Credentials to space-limited applications, such as QR Codes.
 
 ## Terms and Definitions
 
