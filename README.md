@@ -54,11 +54,9 @@ Cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array o
 
 ## Public Key Download and Verifing
 
-Public Keys can be generated using any cryptographic method. Verifiers must implement the cryptographic protocol included in the Public Key PEM File.
+Public Keys can be generated using any cryptographic method. Verifiers must implement the cryptographic protocol included in the Public Key PEM File. Any verifier must be able to download a public key of the signer and maintain an indexed local key-value store of approved public keys in PEM format. 
 
-Any verifier must be able to download a public key of the signer and maintain an indexed local key-value store of approved public keys in PEM format. 
-
-The reference to the public key can be: 
+The keyID of the public key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download.
 1. a database and key ID to facilitate trusted lists of issuers.
 1. a URL address to download keys from. 
