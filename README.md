@@ -1,3 +1,5 @@
+<img align="right" src="demo_qr.png" data-canonical-src="demo_qr.png" width="292px" title="Signed Verifiable Credential"/>
+
 # Paper-first Verifiable Credentials Format - Version 1
 **© 2021 PathCheck Foundation**<br/>
 Authors: [Justin Dossey](mailto:justin.dossey@pathcheck.org) and [Vitor Pamplona](vitor.pamplona@pathcheck.org)<br/>
@@ -5,6 +7,7 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
+
 This document describes the protocol to compress Verifiable Credentials into URIs for space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
 
 ## Terms and Definitions
