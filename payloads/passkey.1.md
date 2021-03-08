@@ -11,11 +11,10 @@ Fields in the **serialization** order:
 
 ## Hashing Rules
 When generating a passkey hash, the following rules MUST be followed to generate consistent results:
-1. The only elements to be serialized should be the ones in the **DATA** block.
 1. The elements MUST be concatenated in the order defined in the **PASSKEY** Serialization Order section, with the `ctrl-^` (character code `30`, hex `1E`, `RS`, or Record Separator) delimiter.
 1. The concatenation should be a UTF-8 string.
 1. The concatenation MUST be converted to uppercase prior to hashing.
-1. The elements MUST NOT be Percent Encoded prior to hashing.
+1. The elements MUST **NOT** be Percent Encoded prior to hashing.
 1. The output hash MUST be a SHA256 hash in base32 format without padding symbols (`=`).
 
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
