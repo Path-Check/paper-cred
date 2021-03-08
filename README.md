@@ -130,6 +130,9 @@ number of characters, but some of the characters not required to be encoded are
 not included in the Alphanumeric QR character set. As a result, those characters
 MUST also be percent encoded. 
 
+<details>
+  <summary>Show me which characters need encoding?</summary>
+
 ### Which Characters Need Encoding?
 
 The columns in the table below indicate encoding requirements for each
@@ -209,11 +212,13 @@ column indicates the expected output from processing the listed character.
 | `{` | YES | YES | YES | `%7C` |
 | `}` | YES | YES | YES | `%7D` |
 | `~` | NO  | YES | YES | `%7E` |
+</details>
 
 # Implementation Guidance
 
 ## Pseudo-Code describing signing and assembly of the URI:
 
+To sign and assemble URI:
 ```bash
 $payload ::= [$number, $total, $city, $phase, $indicator];
 for ($i ::= 0; $i < length($payload); $i += 1) do
@@ -236,6 +241,7 @@ $uri ::= $upcasedBase + ":" + $payloadString;
 
 ## Pseudo-Code describing parsing and verifying of the URI:
 
+To parse and verify a URI:
 ```bash
 [$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
 $payload ::= $payloadString.split('/')
