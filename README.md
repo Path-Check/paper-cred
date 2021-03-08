@@ -1,5 +1,5 @@
 # Paper-first Verifiable Credentials URI Specification
-<img align="right" src="demo_qr.png" data-canonical-src="demo_qr.png" width="292px" title="Signed Verifiable Credential"/>
+<img align="right" src="demo_qr.png" data-canonical-src="demo_qr.png" width="288px" title="Signed Verifiable Credential"/>
 
 **© 2021 PathCheck Foundation**<br/>
 Authors: [Justin Dossey](mailto:justin.dossey@pathcheck.org) and [Vitor Pamplona](vitor.pamplona@pathcheck.org)<br/>
@@ -131,7 +131,7 @@ not included in the Alphanumeric QR character set. As a result, those characters
 MUST also be percent encoded. 
 
 <details>
-  <summary>Show me which characters need encoding?</summary>
+  <summary>Show me which characters need encoding</summary>
 
 ### Which Characters Need Encoding?
 
