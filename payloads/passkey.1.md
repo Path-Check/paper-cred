@@ -21,8 +21,8 @@ When generating a passkey hash, the following rules MUST be followed to generate
 Thus, the SHA256 hash of the data in the example below would be calculated as in the following pseudo-code:
 
 ```bash
-hash(“${name}\x1E${dob}\x1E${phone}\x1E${salt}”) == hash(“JANE DOE\x1E19010101\x1E1BC93AB4AXD3”)
--> “FQTQAAKKCWUJMAEXAVZTERQDYX7VQB76M6R7XEAVWBQ6EOSQOZBA”
+hash(“${name}\x1E${dob}\x1E${salt}\x1E${phone}”) == hash(“JANE DOE\x1E19820321\x1E633PBY127H\x1E16173332345”)
+-> “W4XL4HM7VV3G6TXSALXZNPUVAZD2RZP6Y2QLNKLXD5NA7LSVQAVQ”
 ```
 
 ## Example:
