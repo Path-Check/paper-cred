@@ -37,13 +37,6 @@ All verifiable credential QR codes follow a URI Schema that starts with "CRED:" 
 
 The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private key of the **ISSUER**. 
 
-The reference to the **public** key can be: 
-1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
-1. a database and key ID to facilitate trusted lists of issuers (TODO: Need to specify this keyId database format). 
-1. a URL address to download keys from. 
-
-For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
-
 The URI is simply organized in a colon-separated string as:
 ```
 cred:type:version:signature:keyId:payload
@@ -51,13 +44,47 @@ cred:type:version:signature:keyId:payload
 
 ## Payloads
 
-Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository.
+Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository. The payload encoding is described in sections below. 
 
 ## Signing and Hashing
 
-Data to be used for signing and hashes is serialized in the specified order this payload describes. Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
+Data to be used for signing and hashes is serialized in the specified order the payload describes. Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
 
 The cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload. The resulting signature in Distinguished Encoding Rules (DER - as per ASN.1 encoding rules defined in the [ITU-T X.690, 2002, specification](https://itu.int/itu-t/recommendations/rec.aspx?rec=X.690)) format must be then encoded in Base32URL, a Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without added padding (`=`). The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
+
+## Public Keys
+
+Any verifier must be able to download a public key of the signer. Public keys can be generated using any cryptographic method. Verifiers must implement the cryptographic protocol included in the Public Key PEM File.
+
+The reference to the public key can be: 
+1. a FQDN to a DNS TXT Record containing the key for download.
+1. a database and key ID to facilitate trusted lists of issuers.
+1. a URL address to download keys from. 
+
+For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
+
+### 1. DNS TXT Record
+
+When the key is placed into DNS TXT records, issuers need to convert their PEM files to remove new line chars or `\n`, as new line is not a valid character for TXT Records. Issuers should replace `\n` with `\\n`.  
+
+For example, a DNS Lookup on the keyId `keys.pathcheck.org` has: (`$ dig -t txt keys.pathcheck.org`):
+```
+-----BEGIN PUBLIC KEY-----\\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE6DeIun4EgMBLUmbtjQw7DilMJ82YIvOR\\n2jz/IK0R/F7/zXY1z+gqvFXfDcJqR5clbAYlO9lHmvb4lsPLZHjugQ==\\n-----END PUBLIC KEY-----\\n
+```
+
+Verifiers must then return the content to it's original format by (this code can change from language to language): 
+
+```
+pem_str = pem_str.replaceAll('\\n', '\n')
+```
+
+### 2. Trusted List of Issuers
+
+If the public key comes from a fixed database of keys (trusted lists of keys), the period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier in the order of specific to broad. As an example, the keyId `1a9.cdc` means the database is coming from the CDC and the id in that database is `1a9`. Each ID must contain the raw PEM file of the issuer. 
+
+### 3. Downloadable PEM file
+
+A direct URL of the raw PEM file of the public key inside the issuer's website without the schema (`https://`) component. For example, the keyId ```www.pathcheck.org/hubfs/pub``` downloads a file that contains the public key of a ECDSA keypair. Verifiers must add `https://` to the URL, download and parse the key. 
 
 ## Example
 
