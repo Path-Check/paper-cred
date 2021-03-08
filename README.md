@@ -1,6 +1,6 @@
+# Paper-first Verifiable Credentials URI Specification
 <img align="right" src="demo_qr.png" data-canonical-src="demo_qr.png" width="292px" title="Signed Verifiable Credential"/>
 
-# Paper-first Verifiable Credentials Format - Version 1
 **© 2021 PathCheck Foundation**<br/>
 Authors: [Justin Dossey](mailto:justin.dossey@pathcheck.org) and [Vitor Pamplona](vitor.pamplona@pathcheck.org)<br/>
 Status: *DRAFT*<br/>
