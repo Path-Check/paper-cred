@@ -256,7 +256,7 @@ $base32URL ::= $base32.replaceAll("=", "");
 
 To add padding back to Base32-encoded strings do:
 ```bash
-switch ($base32NoPad.length % 8) {
+switch ($base32URL.length % 8) {
     case 2: $base32 ::= $base32URL + "======"; break;
     case 4: $base32 ::= $base32URL + "====";  break;
     case 5: $base32 ::= $base32URL + "==="; break;
