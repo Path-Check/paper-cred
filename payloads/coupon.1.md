@@ -12,21 +12,7 @@ Fields in the **serialization** order:
 1. `phase`: *Required.* **SHORTSTRING**. The vaccination phase assigned to the **HOLDER**.
 1. `indicator`: *Required.* **SHORTSTRING**. An indication of the priority assignment for **HOLDER**, or the literal string `"none"` if there is no priority assignment.
 
-## JSON example:
-```json
-{
-  "type": "coupon",
-  "version": 1,
-  "data": {
-    "number": 37,
-    "total": 5000,
-    "city": "San Francisco",
-    "phase": "1B",
-    "indicator": "Teacher"
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
-  }
-}
+## Example:
+```
+CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:PCF.VITORPAMPLONA.COM:1/5000/SOMERVILLE%20MA%20US/1A/%3E65
 ```

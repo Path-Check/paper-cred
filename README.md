@@ -5,7 +5,7 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
-This document describes the protocol to compress Verifiable Credentials to space-limited applications, such as QR Codes.
+This document describes the protocol to compress Verifiable Credentials to space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
 
 ## Terms and Definitions
 
@@ -27,27 +27,52 @@ This document will use the following terms to define data types.
 
 # General Structure
 
-All QR codes contain a message with: 
-1. the **type** of the certificate
-1. the **version**
+All verifiable credential QR codes follow a URI Schema that starts with "CRED:" and a message with: 
+
+1. the **type** of the payload
+1. the **version** of the payload
 1. the **payload** itself
-1. the reference to a **public key**
+1. the **keyId**, a reference to the public key
 1. and a cryptographic **signature** of the payload
 
-The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private key of the **ISSUER**. 
+The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private key of the **ISSUER**. 
 
 The reference to the **public** key can be: 
 1. a FQDN to a DNS TXT Record containing the key for download (TODO: Need to specify the format of the TXT Record).
-1. a URL address to download keys from. 
 1. a database and key ID to facilitate trusted lists of issuers (TODO: Need to specify this keyId database format). 
+1. a URL address to download keys from. 
 
 For signature verification, devices should maintain an indexed local key-value stores of approved public keys in PEM format. 
 
-Data represented in QR codes can be encoded in JSON and URI formats, but URI formats are strongly preferred due to their smaller message size. Examples are in JSON for easier readability but both encodings are described in this document.
+The URI is simply organized in a colon-separated string as:
+```
+cred:type:version:signature:keyId:payload
+```
 
-## Payload Types
+## Payloads
 
-All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository. Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. 
+Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository.
+
+## Signing and Hashing
+
+Data to be used for signing and hashes is serialized in the specified order this payload describes. Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
+
+The cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload. The resulting signature in Distinguished Encoding Rules (DER - as per ASN.1 encoding rules defined in the [ITU-T X.690, 2002, specification](https://itu.int/itu-t/recommendations/rec.aspx?rec=X.690)) format must be then encoded in Base32URL, a Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without added padding (`=`). The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
+
+## Example
+
+The example below is a valid credential
+```
+CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:PCF.VITORPAMPLONA.COM:1/5000/SOMERVILLE%20MA%20US/1A/%3E65
+```
+
+# Payload Encodings
+
+The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted. Percent encoding of the upcased payload is used to address QR code character set limitations, while supporting the URI spec. 
+
+## Percent Encoding
+
+Payload Values are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding). Note that all characters not present in the Alphanumeric QR scheme must be percent encoded. The Alphanumeric QR Code type imposes significant limitations on the data which can be represented, but allows for the generation of a lower-resolution QR code. Smaller QR codes will be scannable with older hardware and lower-resolution scanners, and smaller data sets allow for more aggressive error correction. This promotes usability and equity.
 
 ## Case Insensitivity
 
@@ -55,87 +80,7 @@ All fields (keys as well as values) are case-insensitive in both JSON and URI fo
 
 For clarity and ease of reading, examples in this document are given in mixed case. 
 
-## Payload Percent Encoding
-
-Percent encoding of the upcased payload is used to address QR code character set limitations, while supporting the URI spec. 
-
-## Base32URL Encoding
-
-A version of the Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without padding (Base32URL) is used to encode hashes and signatures. The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
-
-## Signing and Hashing
-
-Data to be used for signing and hashes is serialized in the specified order this payload describes. Cryptographic signatures and hashes **MUST** be calculated against **uppercased**, **percent encoded** versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
-
-The cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded** payload. The resulting signature in Distinguished Encoding Rules (DER) format must be then encoded in Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)), removed the added padding (`=`) and added to the URI.
-
-# The JSON Format
-
-When data length is not at issue, this format is simple to read and parse. With the Json format, the payload is organized in the following schema:
-```json
-{
-  "type": "",
-  "version": 0,
-  "data": {},
-  "signature": {}
-}
-```
-
-The payload section is designated the **DATA** block and the cryptographic signature is contained in the **SIGNATURE** block. A block is an object containing a number of key-value pairs. 
-
-## Order of Fields
-In the JSON format, blocks and key/value pairs may occur in any order. For example, a JSON document with the **DATA** block after the **SIGNATURE** block is equivalent to a document with the **SIGNATURE** block after the **DATA** block. Similarly, the key/value pairs within a block may appear in any order.
-
-## The **SIGNATURE** Block
-The signature block contains the Base32URL signature digest of the prepared **DATA** block and a *keyId* referencing the database and public key used to verify the signature. In the example below, the public key used to verify the signature is `1a9` in the `cdc` (local key/value) store. The period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier.
-
-The algorithms used for the signature as well as hashing functions (i.e. ECDSA, RSA, others) are defined by the PEM-formatted content found at the Public Key reference. At the moment of writting this document, we strongly suggest ECDSA signatures. 
-
-1. *keyId*: **SHORTSTRING**. a string describing the database and index, the url to download the PEM, or the DNS TXT record of the
-   public key to be used when verifying the cryptographic signature of the **DATA** block.
-2. *base32*: **SIGNATUREBASE32**. The Base32URL-encoded SHA256 digest signature of the
-   **DATA** block, calculated according to the rules above.
-
-### JSON Example
-```json
-{
-  "type": "coupon",
-  "version": 1,
-  "data": { },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ"
-  }
-}
-```
-
-# The URI Format
-When data length is a concern, this format may use fewer bytes than JSON. Keys should be compressed according to the URI Compression rules in this document. Values in the URI format are encoded per the standard using [Percent Encoding](https://en.wikipedia.org/wiki/Percent-encoding). Note that all characters not present in the Alphanumeric QR scheme must be percent encoded.
-
-## URI Schema
-With URI format, payload is organized according to the following URI schema starting with "cred":
-```
-cred:type:version:signature:keyId:payload
-```
-
-The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted.
-
-## URI Example
-
-The example below is a valid credential
-```
-CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:1a9.cdc:37/5000/San%20Francisco/1B/Teacher
-```
-
-## Percent Encoding Payload Fields
-
-All characters not present in the Alphanumeric QR scheme must be percent
-encoded when presented in data fields. RFC 2936 requires percent encoding a
-number of characters, but some of the characters not required to be encoded are
-not included in the Alphanumeric QR character set. As a result, those characters
-MUST also be percent encoded. 
-
-## Serializing Fields on the URI format
+## Optional Fields
 
 Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only add empty delimiters if there is data after. Given fields A (required), B (optional), C (optional) the implementation MUST follow the following example:
 
@@ -146,7 +91,15 @@ Unfilled fields MUST be submitted as empty between slash (`/`) characters. Only 
 | `1` | `2` | `3` | `1/2/3` |
 | `1` |     | `3` | `1//3`  |
 
-## Which Characters Need Encoding?
+## Additional Percent Encoding for the  Alphanumeric QR character set
+
+All characters not present in the Alphanumeric QR scheme must be percent
+encoded when presented in data fields. RFC 2936 requires percent encoding a
+number of characters, but some of the characters not required to be encoded are
+not included in the Alphanumeric QR character set. As a result, those characters
+MUST also be percent encoded. 
+
+### Which Characters Need Encoding?
 
 The columns in the table below indicate encoding requirements for each
 representable character. Any non-listed characters MUST be percent-encoded. The
@@ -226,6 +179,8 @@ column indicates the expected output from processing the listed character.
 | `}` | YES | YES | YES | `%7D` |
 | `~` | NO  | YES | YES | `%7E` |
 
+# Implementation Guidance
+
 ## Pseudo-Code describing signing and assembly of the URI:
 
 ```bash
@@ -281,7 +236,7 @@ switch ($base32NoPad.length % 8) {
     default: $base32 ::= $base32URL;
 }
 ```   
-## OpenSource Demos and Snippet files. 
+# OpenSource Demos and Snippet files. 
 
 * [PathCheck Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
 * [Signing and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)

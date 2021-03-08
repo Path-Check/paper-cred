@@ -18,24 +18,8 @@ Fields in the **serialization** order:
 
 ## Hashing Rules (if any)
 
-## URI Example: 
+## Example: 
 
 ```
 CRED:NAME:VERSION:SIGNATURE:PUBKEY:FIELDS
 ```
-
-## JSON example:
-```json
-{
-  "type": "NAME",
-  "version": 0,
-  "data": {
-    "fields": "FIELDS"
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBCAEIBS5LZ5JUYHBF3HGJABGROYE7QCP6YOZKTLDE67INBSVZVDBJ6ZQIBCALCKC3LQBOFB2P7TM4RG26526Z5ANE5Y5CPZAPFLM4XPLLPRJYXG"
-  }
-}
-```
-

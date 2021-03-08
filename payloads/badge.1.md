@@ -42,26 +42,8 @@ When serializing `boosts` data, the array should be represented as decimal
 strings joined with plus (`+`) characters. Hence, `[28, 14]` would serialize to
 the string `28+14`.
 
-## JSON example:
-```json
-{
-  "type": "badge",
-  "version": 1,
-  "data": {
-    "date": 20210102,
-    "manuf" : "Moderna",
-    "product" : "Covid19",
-    "lot": ":23092",
-    "boosts" : [],
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d",
-    "route": "C28161",
-    "site": "RA",
-    "dose": 500
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBDAEIIAVA3PD5GI7GAMSMDJOF3YCN4PS6D4VFD3LODHVFJ5SFUPSOLIFH7QEIIA6JZW6O2WFCBGYCILP6H6Z4FE5FXOQPF2NNIC46BTPJFEXMASNUGA"
-  }
-}
+## Example:
+```
+CRED:BADGE:1:GBCQEIIA2QCS3EWMMK7I4527OTMZFIAB5WLWH7ZIG7RSG3VJ5FWWOJIG4MEAEIB3ZMEWSGRBVQ2MVQMQP2F3QFS5FZRHLVM2B2O2FHHGG6CCEDDMKI:PCF.VITORPAMPLONA.COM:20210308/MODERNA/COVID19/012L20A/28/W4XL4HM7VV3G6TXSALXZNPUVAZD2RZP6Y2QLNKLXD5NA7LSVQAVQ/C28161/RA/500
 ```
 

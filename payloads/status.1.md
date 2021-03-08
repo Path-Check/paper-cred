@@ -9,19 +9,9 @@ Fields in the **serialization** order:
    * 2: The **HOLDER** has completed the full vaccination course.
 1. `passkey`: *Required.* **HASH**. The cryptographic hash of the data in the **Passkey**, as defined by the **Passkey** Specification.
 
-## JSON example:
-```json
-{
-  "type": "status",
-  "version": 1,
-  "data": {
-    "vaccinated": 2,
-    "passkey": "d9116bbdf7e33414b23ce81b2d4b9079a111d7119be010a5dcde68a1e5414d2d"
-  },
-  "signature": {
-    "keyId": "1a9.cdc",
-    "base32": "GBCAEIBS5LZ5JUYHBF3HGJABGROYE7QCP6YOZKTLDE67INBSVZVDBJ6ZQIBCALCKC3LQBOFB2P7TM4RG26526Z5ANE5Y5CPZAPFLM4XPLLPRJYXG"
-  }
-}
+## Example:
+
+```
+CRED:STATUS:1:GBCAEIDMK3P56TZVRCJNOKC62ZDDTWKXVKLRGGQQIGNZPGRUPMHT7O4TW4BCA45HQE45XOSXW6GGG562N4YT5YVHBG4YZWXXEIGFPH5ANKT5X2O7:PCF.VITORPAMPLONA.COM:1/W4XL4HM7VV3G6TXSALXZNPUVAZD2RZP6Y2QLNKLXD5NA7LSVQAVQ
 ```
 
