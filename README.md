@@ -5,7 +5,7 @@ Status: *DRAFT*<br/>
 Date: Feb 26, 2021<br/>
 
 # Purpose
-This document describes the protocol to compress Verifiable Credentials to space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
+This document describes the protocol to compress Verifiable Credentials into URIs for space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
 
 ## Terms and Definitions
 
