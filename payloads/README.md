@@ -23,9 +23,12 @@ Fields in the **serialization** order:
 
 ## Hashing Rules (if any)
 
+...
+
 ## Example: 
 
-```
+``
 CRED:NAME:VERSION:SIGNATURE:PUBKEY:FIELDS
-```
+``
+
 ```
