@@ -279,6 +279,7 @@ switch ($base32URL.length % 8) {
 * [Signing and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
 * [Signing and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
 * [Signing and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
+* [Signing and Verifier Snippet in zSh Script](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.sh)
 
 # Contributing
 
