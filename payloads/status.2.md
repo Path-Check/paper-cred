@@ -12,7 +12,7 @@ Fields in the **serialization** order:
 1. `passkey`: *Optional.* **HASH**. The cryptographic hash of the data in the **Passkey**, as defined by the **Passkey** Specification.
 1. `initials`: *Optional.* **HASH**. The initials of the **Holder** in the format of `FLYY`: First name initial + Last Name initial + Last 2 of the Year of birth
 
-Although `passkey` and `initials` are optional, issuers must include one of them to include in the payload. 
+Although `passkey` and `initials` are optional, issuers must include one of them. 
 
 ## Example:
 
