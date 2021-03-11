@@ -52,6 +52,7 @@ Main Benefits of this protocol are
 1. Extremely small QR Sizes in Alphanumeric (~140 bytes for the average payload)
     1. Allows for the use of feature phones and low energy chips as scanners. 
     1. It is ideal size and character set to use on SMS, SmartCards and NFC tags
+    1. It's readable by any text file
 1. Freedom of payload specification
     1. Any new payload can be described and approved in minutes
     1. Business logic is part of the payload definition as opposed to hidden
@@ -67,13 +68,13 @@ Main Benefits of this protocol are
     1. No need to trust app developers or private lists of approved issuers
 1. Enhanced Security
     1. The signed payload is cryptographically protected and thus impossible to tamper
-    1. 
 1. Freedom of binding
     1. There's no requirement to bind certificate to a user or proxy models to a user
     1. Electronic binding with individual wallets is possible when the certificate is loaded on an app. 
-1. Extremely Private  
+1. Extremely private  
     1. The only information online is a public key.
-    1. The protocol does not require centralized servers: no exposure to government, private companies, trusted lists
+    1. The protocol does not require centralized servers. 
+    1. No exposure to government, no blockchain, no private companies, no trusted lists
     1. There's no need to manage did's or other private issuing systems
 1. Easy to backup 
     1. A simple picture or a paper copy serves as a backup of the code
