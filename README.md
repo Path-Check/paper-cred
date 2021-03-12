@@ -279,60 +279,60 @@ column indicates the expected output from processing the listed character.
 ## Pseudo-Code describing signing and assembling of the URI:
 
 To sign and assemble URI:
-```bash
-$payload ::= [$number, $total, $city, $phase, $indicator];
-for ($i ::= 0; $i < length($payload); $i += 1) do
-  $upcasedValue ::= upcase($payload[$i]);
-  $encodedValue ::= percentEncode($payload[$i]);
-  $payload[$i] ::= $encodedValue;
+```js
+$payload = [$number, $total, $city, $phase, $indicator];
+for ($i = 0; $i < length($payload); $i += 1) do
+  $upcasedValue = upcase($payload[$i]);
+  $encodedValue = percentEncode($payload[$i]);
+  $payload[$i] = $encodedValue;
 end
 
-$payloadString ::= join('/', $payload);
-$payloadHash ::= sha256($payloadString.to('utf-8'));
+$payloadString = join('/', $payload);
+$payloadHash = sha256($payloadString.to('utf-8'));
 
-$keyId ::= $DNS_TXT_FQDN || $URL_TO_PEM_FILE || $REF_TO_DATABASE
-$signatureDER ::= ecdsaSign($payloadHash);
+$keyId = $DNS_TXT_FQDN || $URL_TO_PEM_FILE || $REF_TO_DATABASE
+$signatureDER = ecdsaSign($payloadHash);
 
-$signature ::= b32toB32URL(b32encode($signatureDER))
-$base ::= "cred:" + $type + ":" + $version + ":" + $signature + ":" + $keyId;
-$upcasedBase ::= upcase($base);
+$signature = b32toB32URL(b32encode($signatureDER))
+$base = join(':', ["cred", $type, $version, $signature, $keyId]);
+$upcasedBase = upcase($base);
 
-$uri ::= $upcasedBase + ":" + $payloadString;
+$uri = $upcasedBase + ":" + $payloadString;
 ```
 
 ## Pseudo-Code describing parsing and verifying of the URI:
 
 To parse and verify a URI:
-```bash
+```js
 [$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
-$payload ::= $payloadString.split('/')
+$payload = $payloadString.split('/')
 
-$publicKeyPem ::= localDB($keyId) || download($keyId)
-$payloadHash ::= sha256($payloadString.to('utf-8')))
-$signatureDER ::= b32decode(b32URLtoB32($signature))
+$publicKeyPem = localDB($keyId) || download($keyId)
+$payloadHash = sha256($payloadString.to('utf-8')))
+$signatureDER = b32decode(b32URLtoB32($signature))
 
-$valid ::= ecdsaVerify($signatureDER, $payloadHash, $publicKeyPem)
+$valid = ecdsaVerify($signatureDER, $payloadHash, $publicKeyPem)
 
-for ($i ::= 0; $i < length($payload); $i += 1) do
-  $payload[$i] ::= percentDecode($payload[$i]);  
+for ($i = 0; $i < length($payload); $i += 1) do
+  $payload[$i] = percentDecode($payload[$i]);  
 end
 ```
 
 ## Pseudo-Code describing Base32 to Base32URL Mapping
 
 To remove padding from Base32-encoded strings do: 
-```bash
-$base32URL ::= $base32.replaceAll("=", "");
+```js
+$base32URL = $base32.replaceAll("=", "");
 ```
 
 To add padding back to Base32-encoded strings do:
-```bash
+```js
 switch ($base32URL.length % 8) {
-    case 2: $base32 ::= $base32URL + "======"; break;
-    case 4: $base32 ::= $base32URL + "====";  break;
-    case 5: $base32 ::= $base32URL + "==="; break;
-    case 7: $base32 ::= $base32URL + "="; break;
-    default: $base32 ::= $base32URL;
+    case 2: $base32 = $base32URL + "======"; break;
+    case 4: $base32 = $base32URL + "====";  break;
+    case 5: $base32 = $base32URL + "==="; break;
+    case 7: $base32 = $base32URL + "="; break;
+    default: $base32 = $base32URL;
 }
 ```   
 # OpenSource Demos and Snippet files. 
