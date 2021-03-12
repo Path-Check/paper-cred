@@ -280,7 +280,7 @@ column indicates the expected output from processing the listed character.
 
 To sign and assemble URI:
 ```js
-$payload = [$number, $total, $city, $phase, $indicator];
+payload = [number, total, city, phase, indicator];
 for ($i = 0; $i < length($payload); $i += 1) do
   $upcasedValue = upcase($payload[$i]);
   $encodedValue = percentEncode($payload[$i]);
