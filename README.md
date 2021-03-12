@@ -135,9 +135,9 @@ Verifiers must then return the content to it's original format by replacing `\\n
 
 ## 2. Trusted List of Issuers
 
-If the public key comes from a fixed database of keys (trusted lists of keys), the period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier in the order of specific to broad. 
+The PathCheck Foundation will keep a list of trusted issuers on this [repository](https://github.com/Path-Check/paper-cred/tree/keys). References to this list use the period character (`.`) to separate the id of the public key from the name of the database/folder in this order: `id.folder`
 
-As an example, the keyId `1a9.cdc` means the database is coming from the CDC and the id in that database is `1a9`. Each ID must contain the raw PEM file of the issuer. 
+As an example, the keyId `1a9.pcf` means the database is at the [PCF](https://github.com/Path-Check/paper-cred/tree/keys/pcf) folder and the file name in that database is [1a9.pem](https://github.com/Path-Check/paper-cred/tree/keys/pcf/1a9.pem). Each ID must contain the raw PEM file of the issuer. 
 
 ## 3. Downloadable PEM file
 
