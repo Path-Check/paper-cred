@@ -338,27 +338,29 @@ switch ($base32URL.length % 8) {
 
 ## Pseudo-Code describing how to download a list of valid paylods the GitHub Repo
 ```js
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/
 
-$filesRoot = JSON.parse(fetch("https://api.github.com/repos/Path-Check/paper-cred/git/trees/main")).tree
-$payloadsDir = $filesRoot.find(element => element.path === 'payloads');
+$rootDir = JSON.parse(fetch($gitHubTree)).tree
+$payloadsDir = $rootDir.find(element => element.path === 'payloads');
 
-$payloadFiles = JSON.parse(fetch("https://api.github.com/repos/Path-Check/paper-cred/git/trees/"+$payloadsDir.sha)).tree
-$payloads = $payloadFiles.map(x => x.path.replaceAll(".md","").replaceAll(".",":"));
+$payloadDir = JSON.parse(fetch($gitHubTree + $payloadsDir.sha)).tree
+
+$payloadNames = $payloadDir.map(x => x.path.replaceAll(".md","").replaceAll(".",":"));
 ```
 
 ## Pseudo-Code describing how to download a list of keys from the GitHub Repo
 ```js
 [$id, $database] ::= $keyId.split('.')
-$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/;
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/
 
 $rootDir = JSON.parse(fetch($gitHubTree + "main")).tree
-$keysDir = $rootDir.find(element => element.path === 'keys');
+$keysDir = $rootDir.find(element => element.path === 'keys')
 
 $databasesDir = JSON.parse(fetch($gitHubTree + $keysDir.sha)).tree
-$databaseDir = $databasesDir.find(element => element.path === $database);
+$databaseDir = $databasesDir.find(element => element.path === $database)
 
 $pemFiles = JSON.parse(fetch($gitHubTree + $databaseDir.sha)).tree
-$pemFile = $pemFiles.find(element => element.path.startsWith($id));
+$pemFile = $pemFiles.find(element => element.path === $id+".pem")
 
 $publicKeyPem = fetch($gitHubTree + $pemFile.sha)
 ```
