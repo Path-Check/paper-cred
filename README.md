@@ -51,6 +51,7 @@ CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2E
 Main Benefits of this protocol are
 
 1. Extremely small QR Sizes in Alphanumeric (~140 bytes for the average payload)
+    1. Data minimalism by requirements of the application
     1. Allows for the use of feature phones and low energy chips as scanners. 
     1. It is ideal size and character set to use on SMS, SmartCards and NFC tags
     1. It's readable by any text file
@@ -91,10 +92,11 @@ Disadvantages are:
 1. Chance of losing the QR, losing the data
     1. The issuer might have a copy of the event record, but it is not a requirement
     1. Apps and pictures of the card can serve as a backup
-1. No Revocation of cards/credentials 
-    1. The only option is to remove the public key from the domain, invalidating all certificates
-1. The information in the QR itself is not encrypted
-    1. Payload specifications can include password-protected fields if they wish.  
+1. No Real Time Revocation of cards/credentials 
+    1. Issuer removes the public key from the domain, invalidating all certificates
+    1. The verifier app needs to wait for the next issuer list (or revocation list) update
+1. The information in the QR itself is not encrypted by design
+    1. Payload specifications can include password-protected fields
 
 # Signing and Hashing
 
