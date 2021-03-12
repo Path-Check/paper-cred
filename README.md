@@ -137,7 +137,7 @@ Verifiers must then return the content to it's original format by replacing `\\n
 
 The PathCheck Foundation will keep a list of trusted issuers on this [repository](https://github.com/Path-Check/paper-cred/tree/keys). References to this list use the period character (`.`) to separate the id of the public key from the name of the database/folder in this order: `id.folder`
 
-As an example, the keyId `1a9.pcf` means the database is at the [PCF](https://github.com/Path-Check/paper-cred/tree/keys/pcf) folder and the file name in that database is [1a9.pem](https://github.com/Path-Check/paper-cred/tree/keys/pcf/1a9.pem). Each ID must contain the raw PEM file of the issuer. 
+As an example, the keyId `1a9.pcf` refers to the database at the [pcf](https://github.com/Path-Check/paper-cred/tree/keys/pcf) folder and the file name in that database is [1a9.pem](https://github.com/Path-Check/paper-cred/tree/keys/pcf/1a9.pem). Each ID must contain the raw PEM file of the issuer. 
 
 ## 3. Downloadable PEM file
 
