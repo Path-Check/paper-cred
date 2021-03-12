@@ -117,11 +117,18 @@ Before validating a signature, verifiers must compute the SHA256 of the payload 
 
 ## 1. DNS TXT Record
 
-When the key is placed into DNS TXT records, issuers need to convert their PEM files to remove new line chars or `\n`, as new line is not a valid character for TXT Records. Issuers should replace `\n` with `\\n`.  
+When the key is placed into DNS TXT records, issuers need to convert their PEM files to remove: 
+1. -----BEGIN PUBLIC KEY-----
+1. -----END PUBLIC KEY-----
+2. new line chars or `\n`, as new line is not a valid character for TXT Records. 
+
+Issuers should replace `\n` with `\\n`. Verifiers must convert back from `\\n` to `\n`
+
+Make sure the remaining PEM includes an Object Identifier (OID) in the base64 format. 
 
 For example, the keyId `keys.pathcheck.org` needs a DNS Lookup and has: (`$ dig -t txt keys.pathcheck.org`):
 ```
------BEGIN PUBLIC KEY-----\\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE6DeIun4EgMBLUmbtjQw7DilMJ82YIvOR\\n2jz/IK0R/F7/zXY1z+gqvFXfDcJqR5clbAYlO9lHmvb4lsPLZHjugQ==\\n-----END PUBLIC KEY-----\\n
+MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE6DeIun4EgMBLUmbtjQw7DilMJ82YIvOR\\n2jz/IK0R/F7/zXY1z+gqvFXfDcJqR5clbAYlO9lHmvb4lsPLZHjugQ==
 ```
 
 Verifiers must then return the content to it's original format by replacing `\\n` by the new line character. 
