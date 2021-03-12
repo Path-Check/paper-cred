@@ -20,7 +20,7 @@ For the purposes of brevity, this document refers to the following terms which a
 
 All verifiable credentials follow a URI Schema that starts with `CRED:` and a message with: 
 
-1. the **type** of the payload
+1. the **type** of the payload, one of the options [here](https://github.com/Path-Check/paper-cred/tree/main/payloads)
 1. the **version** of the payload
 1. the **payload** itself
 1. the **keyId**, a reference to the public key
