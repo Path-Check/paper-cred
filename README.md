@@ -15,6 +15,7 @@ This document describes the protocol to compress Verifiable Credentials into URI
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **HOLDER**: The **HOLDER** is the party who is receiving the credential from the **ISSUER**
 1. **ISSUER**: The **ISSUER** is the party who delivers the credential to a **HOLDER**.
+1. **VERIFIER**: The **VERIFIER** is the party who reads and verifies the signature of credential.
 
 # General Structure
 
