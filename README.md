@@ -141,7 +141,7 @@ As an example, the keyId `1a9.cdc` means the database is coming from the CDC and
 
 ## 3. Downloadable PEM file
 
-This keyId is a direct URL reference with the raw PEM file of the public key inside the issuer's website, but without the URL Schema component (`https://`). Verifiers must add `https://` to the URL, download and parse the key.  
+This keyId is a direct URL reference with the raw PEM file of the public key inside the issuer's website, but without the URL Schema component (`https://`). Host must result the link in **uppercase** format. Verifiers must add `https://` to the URL, download and parse the key.  
 
 For example, the keyId ```www.pathcheck.org/hubfs/pub``` downloads a file that contains the public key of a ECDSA keypair. 
 
