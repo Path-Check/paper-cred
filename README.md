@@ -336,9 +336,9 @@ switch ($base32URL.length % 8) {
 }
 ```   
 
-## Pseudo-Code describing how to download a list of valid paylods the GitHub Repo
+## Pseudo-Code to download a list of valid paylods from the GitHub Repo
 ```js
-$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/"
 
 $rootDir = JSON.parse(fetch($gitHubTree)).tree
 $payloadsDir = $rootDir.find(element => element.path === 'payloads');
@@ -348,10 +348,10 @@ $payloadDir = JSON.parse(fetch($gitHubTree + $payloadsDir.sha)).tree
 $payloadNames = $payloadDir.map(x => x.path.replaceAll(".md","").replaceAll(".",":"));
 ```
 
-## Pseudo-Code describing how to download a list of keys from the GitHub Repo
+## Pseudo-Code to download a list of keys from the GitHub Repo
 ```js
-[$id, $database] ::= $keyId.split('.')
-$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/
+[$id, $database] = $keyId.split('.')
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/"
 
 $rootDir = JSON.parse(fetch($gitHubTree + "main")).tree
 $keysDir = $rootDir.find(element => element.path === 'keys')
