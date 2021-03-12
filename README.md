@@ -269,7 +269,7 @@ column indicates the expected output from processing the listed character.
 
 # Implementation Guidance
 
-## Pseudo-Code describing signing and assembly of the URI:
+## Pseudo-Code describing signing and assembling of the URI:
 
 To sign and assemble URI:
 ```bash
@@ -280,12 +280,13 @@ for ($i ::= 0; $i < length($payload); $i += 1) do
   $payload[$i] ::= $encodedValue;
 end
 
-$payloadString ::= join("/", $payload);
-$payloadHash ::= sha256($payloadString.to("utf-8"));
+$payloadString ::= join('/', $payload);
+$payloadHash ::= sha256($payloadString.to('utf-8'));
 
+$keyId ::= $DNS_TXT_FQDN || $URL_TO_PEM_FILE || $REF_TO_DATABASE
 $signatureDER ::= ecdsaSign($payloadHash);
 
-$signature ::= removePadding(b32encode($signatureDER))
+$signature ::= b32toB32URL(b32encode($signatureDER))
 $base ::= "cred:" + $type + ":" + $version + ":" + $signature + ":" + $keyId;
 $upcasedBase ::= upcase($base);
 
@@ -299,10 +300,11 @@ To parse and verify a URI:
 [$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
 $payload ::= $payloadString.split('/')
 
-$payloadHash ::= sha256(payload.to("utf-8")))
-$signatureDER ::= b32decode(addPadding($signature))
+$publicKeyPem ::= localDB($keyId) || download($keyId)
+$payloadHash ::= sha256($payloadString.to('utf-8')))
+$signatureDER ::= b32decode(b32URLtoB32($signature))
 
-$valid ::= ecdsaVerify($signatureDER, $payloadHash)
+$valid ::= ecdsaVerify($signatureDER, $payloadHash, $publicKeyPem)
 
 for ($i ::= 0; $i < length($payload); $i += 1) do
   $payload[$i] ::= percentDecode($payload[$i]);  
