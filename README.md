@@ -283,7 +283,7 @@ $payloadHash ::= sha256($payloadString.to("utf-8"));
 $signatureDER ::= ecdsaSign($payloadHash);
 
 $signature ::= removePadding(b32encode($signatureDER))
-$base ::= "cred:coupon:" + $version + ":" + $signature + ":" + $keyId;
+$base ::= "cred:" + $type + ":" + $version + ":" + $signature + ":" + $keyId;
 $upcasedBase ::= upcase($base);
 
 $uri ::= $upcasedBase + ":" + $payloadString;
