@@ -97,6 +97,8 @@ Disadvantages are:
     1. The verifier app needs to wait for the next issuer list (or revocation list) update
 1. The information in the QR itself is not encrypted by design
     1. Payload specifications can include password-protected fields
+1. Fields are case insensitive by design
+    1. Payloads are encoraged to encode each field in Base32 to support case sensitivity
 
 # Signing and Hashing
 
