@@ -27,8 +27,7 @@ All verifiable credentials follow a URI Schema that starts with `CRED:` and a me
 1. the **keyId**, a reference to the public key
 1. and a cryptographic **signature** of the payload
 
-The URI is simply organized in a colon-separated string as: <b>cred</b><b>:</b><b style='color:red'>type</b><b>:</b><b style='color:red'>version</b><b>:</b><b style='color:green'>signature</b><b>:</b><b style='color:blue'>keyId</b><b>:</b><b style='color:rgb(197, 107, 197)'>payload</b>
-
+The URI is simply organized in a colon-separated string as:
 ```
 cred:type:version:signature:keyId:payload
 ```
