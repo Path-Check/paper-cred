@@ -27,10 +27,12 @@ All verifiable credentials follow a URI Schema that starts with `CRED:` and a me
 1. the **keyId**, a reference to the public key
 1. and a cryptographic **signature** of the payload
 
-The URI is simply organized in a colon-separated string as:
+The URI is simply organized in a colon-separated string as: <font>cred</font><b>:</b><font style='color:red'>type</font><b>:</b><font style='color:red'>version</font><b>:</b><font style='color:green'>signature</font><b>:</b><font style='color:blue'>keyId</font><b>:</b><font style='color:rgb(197, 107, 197)'>payload</font>
+
 ```
 cred:type:version:signature:keyId:payload
 ```
+
 
 The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of certificate. The **payload** block contains the information itself in a pre-defined format. The cryptographic signature is a DER signature in Base32 form, calculated using the private key of the **ISSUER**. 
 
