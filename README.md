@@ -33,7 +33,7 @@ cred:type:version:signature:keyId:payload
 ```
 
 
-The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of certificate. The **payload** block contains the information itself in a pre-defined format. The cryptographic signature is a DER signature in Base32 form, calculated using the private key of the **ISSUER**. 
+The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of payload. The **payload** block contains the information itself in a pre-defined format. The cryptographic signature is a DER signature in Base32 form, calculated using the private key of the **ISSUER**. 
 
 ## Payloads
 
@@ -72,8 +72,8 @@ Main Benefits of this protocol are
 1. Enhanced Security
     1. The signed payload is cryptographically protected and thus impossible to tamper
 1. Freedom of binding
-    1. There's no requirement to bind certificate to a user or proxy models to a user
-    1. Electronic binding with individual wallets is possible when the certificate is loaded on an app. 
+    1. There's no requirement to bind the credential to a user or proxy models to a user
+    1. Electronic binding with individual wallets is possible when the credential is loaded on an app. 
 1. Extremely private  
     1. The only information online is a public key.
     1. The protocol does not require centralized servers. 
@@ -90,16 +90,16 @@ Main Benefits of this protocol are
 Disadvantages are: 
 1. Traceability of the QR Codes is possible by colluding verifiers
     1. Solutions include generating multiple salted QR Codes to be given away as opposed to one code that is read everywhere
-1. Chance of losing the QR, losing the data
+1. Chance of losing the data if the QR is lost
     1. The issuer might have a copy of the event record, but it is not a requirement
     1. Apps and pictures of the card can serve as a backup
-1. No Real Time Revocation of cards/credentials 
-    1. Issuer removes the public key from the domain, invalidating all certificates
+1. No realtime revocation of cards/credentials 
+    1. Issuer removes the public key from the domain, invalidating all credentials
     1. The verifier app needs to wait for the next issuer list (or revocation list) update
 1. The information in the QR itself is not encrypted by design
     1. Payload specifications can include password-protected fields
 1. Fields are case insensitive by design
-    1. Payloads are encoraged to encode each field in Base32 to support case sensitivity
+    1. Payloads are encoraged to encode each field in Base32 if case sensitivity is required
 
 # Signing and Hashing
 
