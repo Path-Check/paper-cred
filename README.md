@@ -307,7 +307,7 @@ $uri = $upcasedBase + ":" + $payloadString;
 
 To parse and verify a URI:
 ```js
-[$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
+[$schema, $type, $version, $signature, $keyId, $payloadString] = qr.split(':')
 $payload = $payloadString.split('/')
 
 $publicKeyPem = localDB($keyId) || download($keyId)
