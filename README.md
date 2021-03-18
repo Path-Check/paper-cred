@@ -15,6 +15,142 @@ This document describes the protocol to compress Verifiable Credentials into URI
 For the purposes of brevity, this document refers to the following terms which are defined as follows:
 1. **HOLDER**: The **HOLDER** is the party who is receiving the credential from the **ISSUER**
 1. **ISSUER**: The **ISSUER** is the party who delivers the credential to a **HOLDER**.
+1. **VERIFIER**: The **VERIFIER** is the party who reads and verifies the signature of credential.
+
+# General Structure
+
+All verifiable credentials follow a URI Schema that starts with `CRED:` and a message with: 
+
+1. the **type** of the payload, one of the options [here](https://github.com/Path-Check/paper-cred/tree/main/payloads)
+1. the **version** of the payload
+1. the **payload** itself
+1. the **keyId**, a reference to the public key
+1. and a cryptographic **signature** of the payload
+
+The URI is simply organized in a colon-separated string as:
+```
+cred:type:version:signature:keyId:payload
+```
+
+
+The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of payload. The **payload** block contains the information itself in a pre-defined format. The cryptographic signature is a DER signature in Base32 form, calculated using the private key of the **ISSUER**. 
+
+## Payloads
+
+Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository. The general payload encoding is described in sections below. 
+
+## Example
+
+The example below is a valid credential
+```
+CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW
+6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:KEYS.PATHCHECK.ORG:1/5000/SOMERVILLE%20MA%20US/1A/%3E65
+```
+
+# Benefits and Limitations
+
+Main Benefits of this protocol are
+
+1. Extremely small QR Sizes in Alphanumeric (~140 bytes for the average payload)
+    1. Data minimalism by requirements of the application
+    1. Allows for the use of feature phones and low energy chips as scanners. 
+    1. It is ideal size and character set to use on SMS, SmartCards and NFC tags
+    1. It's readable by any text file
+1. Freedom of payload specification
+    1. Any new payload can be described and approved in minutes
+    1. Business logic is part of the payload definition as opposed to hidden
+1. Freedom of cryptographic tools to sign for the packages. 
+    1. RSA, ECDSA, JWTs and other signature models are supported
+    1. Protocol guarantees easily accessible Public Keys by design
+    1. Public Key files describe the algorithms being used by the issuer
+1. Composability of QRs enable privacy and selective disclosure
+    1. The hash of one QR can be used in another, building a signed chain of QRs
+1. Domain-based trust model
+    1. If users trust `cdc.gov`, they will also trust `keys.cdc.gov` 
+    1. There is no need for a centralized issuing authority
+    1. No need to trust app developers or private lists of approved issuers
+1. Enhanced Security
+    1. The signed payload is cryptographically protected and thus impossible to tamper
+1. Freedom of binding
+    1. There's no requirement to bind the credential to a user or proxy models to a user
+    1. Electronic binding with individual wallets is possible when the credential is loaded on an app. 
+1. Extremely private  
+    1. The only information online is a public key.
+    1. The protocol does not require centralized servers. 
+    1. No exposure to government, no blockchain, no private companies, no trusted lists
+    1. There's no need to manage did's or other private issuing systems
+1. Easy to backup 
+    1. A simple picture or a paper copy serves as a backup of the code
+1. Negligible cost per user on all activities
+1. Generalizable: 
+    1. Any record/payload can be created and signed in the same format
+1. Free as in beer
+    1. The entire specification is licensed under MIT License
+
+Disadvantages are: 
+1. Traceability of the QR Codes is possible by colluding verifiers
+    1. Solutions include generating multiple salted QR Codes to be given away as opposed to one code that is read everywhere
+1. Chance of losing the data if the QR is lost
+    1. The issuer might have a copy of the event record, but it is not a requirement
+    1. Apps and pictures of the card can serve as a backup
+1. No realtime revocation of cards/credentials 
+    1. Issuer removes the public key from the domain, invalidating all credentials
+    1. The verifier app needs to wait for the next issuer list (or revocation list) update
+1. The information in the QR itself is not encrypted by design
+    1. Payload specifications can include password-protected fields
+1. Fields are case insensitive by design
+    1. Payloads are encoraged to encode each field in Base32 if case sensitivity is required
+
+# Signing and Hashing
+
+Data to be used for signing and hashes is **uppercased**, **percent encoded** and then serialized with a slash-separated (`/`) string in the specified order the payload spec describes. Cryptographic signatures and hashes **MUST** be calculated against encoded versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
+
+Cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded**, slash-separated payload. The resulting signature in Distinguished Encoding Rules (DER - as per ASN.1 encoding rules defined in the [ITU-T X.690, 2002, specification](https://itu.int/itu-t/recommendations/rec.aspx?rec=X.690)) format must be then encoded in Base32URL, a Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without added padding (`=`). The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
+
+# Public Key Download and Verifing
+
+Public Keys can be generated using any cryptographic method. Verifiers must implement the cryptographic protocol included in the Public Key PEM File. Any verifier must be able to download a public key of the signer and maintain an indexed local key-value store of approved public keys in PEM format. 
+
+The keyID of the public key can be: 
+1. a FQDN to a DNS TXT Record containing the key for download.
+1. a database and key ID to facilitate trusted lists of issuers.
+1. a URL address to download keys from. 
+
+Before validating a signature, verifiers must compute the SHA256 of the payload (as is from the URI) and decode the Base32URL signature. 
+
+## 1. DNS TXT Record
+
+When the key is placed into DNS TXT records, issuers need to convert their PEM files to remove: 
+1. -----BEGIN PUBLIC KEY-----
+1. -----END PUBLIC KEY-----
+2. new line chars or `\n`, as new line is not a valid character for TXT Records. 
+
+Issuers should replace `\n` with `\\n`. Verifiers must convert back from `\\n` to `\n`
+
+Make sure the remaining PEM includes an Object Identifier (OID) in the base64 format. 
+
+For example, the keyId `keys.pathcheck.org` needs a DNS Lookup and has: (`$ dig -t txt keys.pathcheck.org`):
+```
+MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE6DeIun4EgMBLUmbtjQw7DilMJ82YIvOR\\n2jz/IK0R/F7/zXY1z+gqvFXfDcJqR5clbAYlO9lHmvb4lsPLZHjugQ==
+```
+
+Verifiers must then return the content to it's original format by replacing `\\n` by the new line character. 
+
+## 2. Trusted List of Issuers
+
+The PathCheck Foundation will keep a list of trusted issuers on this [repository](https://github.com/Path-Check/paper-cred/tree/keys). References to this list use the period character (`.`) to separate the id of the public key from the name of the database/folder in this order: `id.folder`
+
+As an example, the keyId `1a9.pcf` refers to the database at the [pcf](https://github.com/Path-Check/paper-cred/tree/keys/pcf) folder and the file name in that database is [1a9.pem](https://github.com/Path-Check/paper-cred/tree/keys/pcf/1a9.pem). Each ID must contain the raw PEM file of the issuer. 
+
+## 3. Downloadable PEM file
+
+This keyId is a direct URL reference with the raw PEM file of the public key inside the issuer's website, but without the URL Schema component (`https://`). Host must result the link in **uppercase** format. Verifiers must add `https://` to the URL, download and parse the key.  
+
+For example, the keyId ```www.pathcheck.org/hubfs/pub``` downloads a file that contains the public key of a ECDSA keypair. 
+
+# Payload Encodings
+
+The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted. Percent encoding of the upcased payload is used to address QR code character set limitations, while supporting the URI spec. 
 
 ## Global Data Types
 
@@ -27,79 +163,6 @@ This document will use the following terms to define data types.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters.
-
-# General Structure
-
-All verifiable credential QR codes follow a URI Schema that starts with "CRED:" and a message with: 
-
-1. the **type** of the payload
-1. the **version** of the payload
-1. the **payload** itself
-1. the **keyId**, a reference to the public key
-1. and a cryptographic **signature** of the payload
-
-The **type** field declares the [payload](payloads) type (e.g. `COUPON`, `PASSKEY`, `BADGE` or `STATUS`) and the **version** is a ever-incrementing **NUMERIC** field defining the version of the type of certificate. The **payload** section contains the information related to the certificate itself. The cryptographic signature is a SHA256 signature in Base32 form, calculated using the private key of the **ISSUER**. 
-
-The URI is simply organized in a colon-separated string as:
-```
-cred:type:version:signature:keyId:payload
-```
-
-## Payloads
-
-Payload specifications define the syntax and semantic meaning of the fields as well as their order in the serialization process. All payload type specifications must be submitted as pull requests to the [payload](payloads) folder in this repository. The payload encoding is described in sections below. 
-
-## Signing and Hashing
-
-Data to be used for signing and hashes is **uppercased**, **percent encoded** and then serialized with a slash-separated (`/`) string in the specified order the payload spec describes. Cryptographic signatures and hashes **MUST** be calculated against encoded versions of the underlying payload, as they appear in the final URI. This permits signature verification before any decoding. 
-
-Cryptographic tools must sign and verify a SHA256 hash of the UTF-8 byte array of the **uppercased**, **percent-encoded**, slash-separated payload. The resulting signature in Distinguished Encoding Rules (DER - as per ASN.1 encoding rules defined in the [ITU-T X.690, 2002, specification](https://itu.int/itu-t/recommendations/rec.aspx?rec=X.690)) format must be then encoded in Base32URL, a Base32 ([RFC4648](https://tools.ietf.org/html/rfc4648)) without added padding (`=`). The removal of the padding is due to the fact that `=` is not a supported character on both URI and alphanumeric QR codes. 
-
-## Public Key Download and Verifing
-
-Public Keys can be generated using any cryptographic method. Verifiers must implement the cryptographic protocol included in the Public Key PEM File. Any verifier must be able to download a public key of the signer and maintain an indexed local key-value store of approved public keys in PEM format. 
-
-The keyID of the public key can be: 
-1. a FQDN to a DNS TXT Record containing the key for download.
-1. a database and key ID to facilitate trusted lists of issuers.
-1. a URL address to download keys from. 
-
-Before validating a signature, verifiers must compute the SHA256 of the payload (as is from the URI) and decode the Base32URL signature. 
-
-### 1. DNS TXT Record
-
-When the key is placed into DNS TXT records, issuers need to convert their PEM files to remove new line chars or `\n`, as new line is not a valid character for TXT Records. Issuers should replace `\n` with `\\n`.  
-
-For example, the keyId `keys.pathcheck.org` needs a DNS Lookup and has: (`$ dig -t txt keys.pathcheck.org`):
-```
------BEGIN PUBLIC KEY-----\\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAE6DeIun4EgMBLUmbtjQw7DilMJ82YIvOR\\n2jz/IK0R/F7/zXY1z+gqvFXfDcJqR5clbAYlO9lHmvb4lsPLZHjugQ==\\n-----END PUBLIC KEY-----\\n
-```
-
-Verifiers must then return the content to it's original format by replacing `\\n` by the new line character. 
-
-### 2. Trusted List of Issuers
-
-If the public key comes from a fixed database of keys (trusted lists of keys), the period character (`.`) is used as a delimiter to separate the key-value store identifier and the key identifier in the order of specific to broad. 
-
-As an example, the keyId `1a9.cdc` means the database is coming from the CDC and the id in that database is `1a9`. Each ID must contain the raw PEM file of the issuer. 
-
-### 3. Downloadable PEM file
-
-This keyId is a direct URL reference with the raw PEM file of the public key inside the issuer's website, but without the URL Schema component (`https://`). Verifiers must add `https://` to the URL, download and parse the key.  
-
-For example, the keyId ```www.pathcheck.org/hubfs/pub``` downloads a file that contains the public key of a ECDSA keypair. 
-
-## Example
-
-The example below is a valid credential
-```
-CRED:COUPON:1:GBDAEIIA42QDQ5BDUUXVMSQ4VIMMA7RETIZSXB573OL24M4L67LYB24CZYVQEIIA2EZ5W2QXLR7LUSLQW
-6MLAFV3N7OTT3BDAZCNCRMYBMUYC6WMXMNQ:KEYS.PATHCHECK.ORG:1/5000/SOMERVILLE%20MA%20US/1A/%3E65
-```
-
-# Payload Encodings
-
-The payload should be represented as a series of **uppercased**, **percent-encoded** values delimited by the slash (`/`) character. The serialization order is defined in each type of payload specification and key names are omitted. Percent encoding of the upcased payload is used to address QR code character set limitations, while supporting the URI spec. 
 
 ## Percent Encoding
 
@@ -216,70 +279,103 @@ column indicates the expected output from processing the listed character.
 
 # Implementation Guidance
 
-## Pseudo-Code describing signing and assembly of the URI:
+## Pseudo-Code describing signing and assembling of the URI:
 
 To sign and assemble URI:
-```bash
-$payload ::= [$number, $total, $city, $phase, $indicator];
-for ($i ::= 0; $i < length($payload); $i += 1) do
-  $upcasedValue ::= upcase($payload[$i]);
-  $encodedValue ::= percentEncode($payload[$i]);
-  $payload[$i] ::= $encodedValue;
+```js
+$payload = [$number, $total, $city, $phase, $indicator];
+for ($i = 0; $i < length($payload); $i += 1) do
+  $upcasedValue = upcase($payload[$i]);
+  $encodedValue = percentEncode($payload[$i]);
+  $payload[$i] = $encodedValue;
 end
 
-$payloadString ::= join("/", $payload);
-$payloadHash ::= sha256($payloadString.to("utf-8"));
+$payloadString = join('/', $payload);
+$payloadHash = sha256($payloadString.to('utf-8'));
 
-$signatureDER ::= ecdsaSign($payloadHash);
+$keyId = $DNS_TXT_FQDN || $URL_TO_PEM_FILE || $REF_TO_DATABASE
+$signatureDER = ecdsaSign($payloadHash);
 
-$signature ::= removePadding(b32encode($signatureDER))
-$base ::= "cred:coupon:" + $version + ":" + $signature + ":" + $keyId;
-$upcasedBase ::= upcase($base);
+$signature = b32toB32URL(b32encode($signatureDER))
+$base = join(':', ["cred", $type, $version, $signature, $keyId]);
+$upcasedBase = upcase($base);
 
-$uri ::= $upcasedBase + ":" + $payloadString;
+$uri = $upcasedBase + ":" + $payloadString;
 ```
 
 ## Pseudo-Code describing parsing and verifying of the URI:
 
 To parse and verify a URI:
-```bash
-[$schema, $type, $version, $signature, $keyId, $payloadString] ::= qr.split(':')
-$payload ::= $payloadString.split('/')
+```js
+[$schema, $type, $version, $signature, $keyId, $payloadString] = qr.split(':')
+$payload = $payloadString.split('/')
 
-$payloadHash ::= sha256(payload.to("utf-8")))
-$signatureDER ::= b32decode(addPadding($signature))
+$publicKeyPem = localDB($keyId) || download($keyId)
+$payloadHash = sha256($payloadString.to('utf-8')))
+$signatureDER = b32decode(b32URLtoB32($signature))
 
-$valid ::= ecdsaVerify($signatureDER, $payloadHash)
+$valid = ecdsaVerify($signatureDER, $payloadHash, $publicKeyPem)
 
-for ($i ::= 0; $i < length($payload); $i += 1) do
-  $payload[$i] ::= percentDecode($payload[$i]);  
+for ($i = 0; $i < length($payload); $i += 1) do
+  $payload[$i] = percentDecode($payload[$i]);  
 end
 ```
 
 ## Pseudo-Code describing Base32 to Base32URL Mapping
 
 To remove padding from Base32-encoded strings do: 
-```bash
-$base32URL ::= $base32.replaceAll("=", "");
+```js
+$base32URL = $base32.replaceAll("=", "");
 ```
 
 To add padding back to Base32-encoded strings do:
-```bash
+```js
 switch ($base32URL.length % 8) {
-    case 2: $base32 ::= $base32URL + "======"; break;
-    case 4: $base32 ::= $base32URL + "====";  break;
-    case 5: $base32 ::= $base32URL + "==="; break;
-    case 7: $base32 ::= $base32URL + "="; break;
-    default: $base32 ::= $base32URL;
+    case 2: $base32 = $base32URL + "======"; break;
+    case 4: $base32 = $base32URL + "====";  break;
+    case 5: $base32 = $base32URL + "==="; break;
+    case 7: $base32 = $base32URL + "="; break;
+    default: $base32 = $base32URL;
 }
 ```   
+
+## Pseudo-Code to download a list of valid payloads from the GitHub Repo
+```js
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/"
+
+$rootDir = JSON.parse(fetch($gitHubTree)).tree
+$payloadsDir = $rootDir.find(element => element.path === 'payloads');
+
+$payloadDir = JSON.parse(fetch($gitHubTree + $payloadsDir.sha)).tree
+
+$payloadNames = $payloadDir.map(x => x.path.replaceAll(".md","").replaceAll(".",":"));
+```
+
+## Pseudo-Code to download a list of keys from the GitHub Repo
+```js
+[$id, $database] = $keyId.split('.')
+$gitHubTree = "https://api.github.com/repos/Path-Check/paper-cred/git/trees/"
+
+$rootDir = JSON.parse(fetch($gitHubTree + "main")).tree
+$keysDir = $rootDir.find(element => element.path === 'keys')
+
+$databasesDir = JSON.parse(fetch($gitHubTree + $keysDir.sha)).tree
+$databaseDir = $databasesDir.find(element => element.path === $database)
+
+$pemFiles = JSON.parse(fetch($gitHubTree + $databaseDir.sha)).tree
+$pemFile = $pemFiles.find(element => element.path === $id+".pem")
+
+$publicKeyPem = fetch($gitHubTree + $pemFile.sha)
+```
+
+
 # OpenSource Demos and Snippet files. 
 
 * [PathCheck Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
-* [Signing and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
-* [Signing and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
-* [Signing and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
-* [Signing and Verifier Snippet in zSh Script](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.sh)
+* [Signer and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
+* [Signer and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
+* [Signer and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
+* [Signer and Verifier Snippet in zSh Script](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.sh)
 
 # Contributing
 
