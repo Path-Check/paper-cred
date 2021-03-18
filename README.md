@@ -371,11 +371,11 @@ $publicKeyPem = fetch($gitHubTree + $pemFile.sha)
 
 # OpenSource Demos and Snippet files. 
 
-* [PathCheck Demo in JavaScript](https://vitorpamplona.com/vaccine-certificate-qrcode-generator/index.v5.html)
-* [Signer and Verifier Snippet in Python](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.py)
-* [Signer and Verifier Snippet in Ruby](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.rb)
-* [Signer and Verifier Snippet in Java](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.java)
-* [Signer and Verifier Snippet in zSh Script](https://github.com/vitorpamplona/vaccine-certificate-qrcode-generator/blob/main/verify.sh)
+* [Signer and Verifiers in HTML/JavaScript](https://github.pathcheck.org/index.html)
+* [Signer and Verifier Snippet in Python](https://github.com/Path-Check/paper-cred-demo/blob/main/verify.py)
+* [Signer and Verifier Snippet in Ruby](https://github.com/Path-Check/paper-cred-demo/blob/main/verify.rb)
+* [Signer and Verifier Snippet in Java](https://github.com/Path-Check/paper-cred-demo/blob/main/verify.java)
+* [Signer and Verifier Snippet in zSh Script](https://github.com/Path-Check/paper-cred-demo/blob/main/verify.sh)
 
 # Contributing
 
