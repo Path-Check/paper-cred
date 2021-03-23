@@ -7,8 +7,8 @@ Fields in the **serialization** order:
 1. `product`: *Required.* **SHORTSTRING**. The name of the product of the vaccine.
 1. `lot`: *Required.* **SHORTSTRING**. The lot number of bottle of the vaccine.
 1. `ndc`: *Required.* **SHORTSTRING**. The national drug code number
-1. `exp`: *Required.* **DATE**. The lot number of bottle of the vaccine.
-1. `bud`: *Required.* **DATE**. The lot number of bottle of the vaccine.
+1. `exp`: *Required.* **DATE**. The expiration date of the vial.
+1. `bud`: *Required.* **DATE**. The befure use date of the vial.
 1. `route` *Optional.* **SHORTSTRING**. The route of application. Options are:
     | Route Code | Meaning |
     | ----- | ------- |
