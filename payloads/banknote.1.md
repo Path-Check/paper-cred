@@ -14,7 +14,7 @@ Fields in the **serialization** order:
 1. `indicator`: *Optional.* **SHORTSTRING**. A letter and number designation that corresponds to one of the 12 Federal Reserve Banks
 1. `face-plate-number`: *Optional.* **SHORTSTRING**. Identify the printing plates used to print the face side of the note.
 1. `back-plate-number`: *Optional.* **SHORTSTRING**. Identify the printing plates used to print the back side of the note. 
-1. `position`: *Optional.* **SHORTSTRING**. Identify the position on a plate a note was printed
+1. `position-in-plate`: *Optional.* **SHORTSTRING**. Identify the position on a plate a note was printed
 
 ## Example:
 

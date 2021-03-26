@@ -5,7 +5,7 @@ The **STATUS** QR code is designated to contain information about the vaccinatio
 V2 takes the [V1](status.1.md) and adds the option for the **issuer** to add a hash of the [PassKey](passkey.1.md) (more private) or the initials of the Full Name and DoB of the **Holder**
 
 Fields in the **serialization** order:
-1. `vaccinated`: *Required.* **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
+1. `status`: *Required.* **SHORTNUMERIC**. The vaccination status of the **HOLDER**. Currently designated values are below. Future versions of this specification may designate other values as required.
    * 0: The **HOLDER** has not received any vaccination.
    * 1: The **HOLDER** has started, but not completed, a course of vaccination.
    * 2: The **HOLDER** has completed the full vaccination course.
