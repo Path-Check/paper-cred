@@ -3,8 +3,8 @@
 The IBM **Liberty Health Passport** QR code contains a COVID-19 Vaccination Status of a **HOLDER** on a Regular W3C certificate.
 
 Fields in the **serialization** order:
-1. `firstname`: *Required.* **STRING**. The first name of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. `lastname`: *Required.* **STRING**. The last name of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. `firstName`: *Required.* **STRING**. The first name of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. `lastName`: *Required.* **STRING**. The last name of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. `dob`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. `display`: *Required.* **STRING**. The display code for the Status card.
 1. `passType`: *Required.* **STRING**. The display type of passport issued.
