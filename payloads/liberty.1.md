@@ -16,7 +16,7 @@ Fields in the **serialization** order:
 
 ## Fixed Fields
 
-The conversion back and forth between a W3C certificate and a QR Code must add the following fixed value fieds:
+When converting the certificate back to a JSON structure, verifiers must hardcode this JSON template. 
 ```
 {
     "@context": ["https://www.w3.org/2018/credentials/v1"],
@@ -27,6 +27,7 @@ The conversion back and forth between a W3C certificate and a QR Code must add t
         "type": "JsonSchemaValidator2018"
     },
     "credentialSubject": {
+        ...
         "type": "Liberty HealthPass"
     },
     "proof": {
@@ -38,7 +39,5 @@ The conversion back and forth between a W3C certificate and a QR Code must add t
 
 ## Example:
 ```
-CRED:PASSKEY:1:GBCAEICBWCIVX2FSRW4PQ3QVSC7FJ7HOMVEPZSTQMKTHWRLBAOFAZNKGUYBCAALORNEN4XTVYGFX4X
-ZZYBOITFVVGGCYTHUCKVSSTP5VITSAJTEE:KEYS.PATHCHECK.ORG:JANE%20DOE/19820321/633PBY127H/16173
-332345
+CRED:LIBERTY:1:GBCQEIBXAP4BBH2OMC3FRXTKEUSXP4ZK6MUEMVA376UAG3KDRTIDOXW574BCCAF5O3VC77NO7T67FXK7TOVFKG7EECE36NMEINQ3VC4GIHAWZRJMFQ:KEYS.PATHCHECK.ORG:JANE/DOE/19810101/%23999999E/COVID-19%20VACCINATION/ISSUER%2B%3BID%3DLIBERTYHEALTHPASS%3BVERSION%3D0.1/20210228/20210328/DID%3AHPASS%3AWOURRKQ6YKYPBVMKNSR6PSHLW2TDDS5SICFNL2HMVSU73NEO4S7Q%3AOIIAE2TJDDRSKDA5CCKGG3AKRHGAMRUM6MBLZYRBNYQMOVOQECWA/ISSUER%2B%23VC-SOME-LONG-UUID-THAT-LOOKS-LIKE-THIS
 ```
