@@ -8,7 +8,6 @@ Fields in the **serialization** order:
 1. `dob`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
 1. `display`: *Required.* **STRING**. The display code for the Status card.
 1. `passType`: *Required.* **STRING**. The display type of passport issued.
-1. `schemaID`: *Required.* **STRING**. Unique ID of the Schema Type
 1. `date`: *Required.* **DATE**. The date of issuance of the passport.
 1. `expiration`: *Required.* **DATE**. The date of expiration of the passport.
 1. `issuer`: *Required.* **STRING**. The issuer of the certificate. If a DID, map from hex to Base32URL. 
@@ -16,14 +15,15 @@ Fields in the **serialization** order:
 
 ## Fixed Fields
 
-When converting the certificate back to a JSON structure, verifiers must hardcode this JSON template. 
+When converting the certificate back to a JSON structure, verifiers must hardcode this JSON template, replacing `${ISSUER}` by the content of `issuer`, `${ID}` for the `id` from the payload and `${KEYID}` is the key id in the URI
 ```
 {
     "@context": ["https://www.w3.org/2018/credentials/v1"],
     "type": ["VerifiableCredential"],
+    "id": "${ISSUER}#vc-${ID}"
     ...
     "credentialSchema": {
-         ...
+        "id": "${ISSUER};id=libertyhealthpass;version=0.1"
         "type": "JsonSchemaValidator2018"
     },
     "credentialSubject": {
@@ -32,6 +32,7 @@ When converting the certificate back to a JSON structure, verifiers must hardcod
     },
     "proof": {
         ....
+        "creator": "${ISSUER}#${KEYID}"
         "type": "EcdsaSecp256r1Signature2019"
     }
 }
