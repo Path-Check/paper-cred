@@ -8,7 +8,7 @@ Date: Feb 26, 2021<br/>
 
 # Purpose
 
-This document describes the protocol to compress Verifiable Credentials into URIs for space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
+The PathCheck Verifiable QR Specification is an extension of the [W3C Verifiable Credentials Data Model](https://github.com/w3c/vc-data-model) expressed as a URI for the purposes of providing a standardized format of describing Verifiable Credentials within the constraints of the QR specification. This document describes the protocol to create Verifiable Credentials directly as URIs for space-limited alphanumeric-required applications, such as QR Codes, NFC tags and SMS Messages.
 
 ## Terms and Definitions
 
