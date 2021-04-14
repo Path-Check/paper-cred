@@ -1,6 +1,6 @@
-# **Liberty** Payload
+# **Liberty** W3C VC Payload
 
-The IBM **Liberty Health Passport** QR code contains a COVID-19 Vaccination Status of a **HOLDER** on a Regular W3C certificate.
+The IBM **Liberty Health Passport** QR code contains a COVID-19 Vaccination Status of a **HOLDER** on a Regular W3C credential.
 
 Fields in the **serialization** order:
 1. `credentialSubject.subject.name.given`: *Required.* **STRING**. The first name of the **HOLDER**, to be used when authenticating the **HOLDER**.
@@ -10,17 +10,17 @@ Fields in the **serialization** order:
 1. `credentialSubject.passType`: *Required.* **STRING**. The display type of passport issued.
 1. `issuanceDate`: *Required.* **DATE**. The date of issuance of the passport.
 1. `expirationDate`: *Required.* **DATE**. The date of expiration of the passport.
-1. `issuer`: *Required.* **STRING**. The issuer of the certificate. If a DID, map from hex to Base32URL. 
-1. `id`: *Required.* **STRING**. The ID of this certificate.
+1. `issuer`: *Required.* **STRING**. The issuer of the credential. If a DID, map from hex to Base32URL. 
+1. `uuid`: *Required.* **STRING**. The ID of this credential.
 
-## Fixed Fields
+## Fixed  W3C VC Fields
 
-When converting the certificate back to a JSON structure, verifiers must hardcode this JSON template, replacing `${ISSUER}` by the content of `issuer`, `${ID}` for the `id` from the payload and `${KEYID}` is the key id in the URI
+When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
 ```
 {
     "@context": ["https://www.w3.org/2018/credentials/v1"],
     "type": ["VerifiableCredential"],
-    "id": "${ISSUER}#vc-${ID}"
+    "id": "${ISSUER}#vc-${UUID}"
     ...
     "credentialSchema": {
         "id": "${ISSUER};id=libertyhealthpass;version=0.1"
@@ -40,5 +40,8 @@ When converting the certificate back to a JSON structure, verifiers must hardcod
 
 ## Example:
 ```
-CRED:LIBERTY:1:GBCQEIBXAP4BBH2OMC3FRXTKEUSXP4ZK6MUEMVA376UAG3KDRTIDOXW574BCCAF5O3VC77NO7T67FXK7TOVFKG7EECE36NMEINQ3VC4GIHAWZRJMFQ:KEYS.PATHCHECK.ORG:JANE/DOE/19810101/%23999999E/COVID-19%20VACCINATION/ISSUER%2B%3BID%3DLIBERTYHEALTHPASS%3BVERSION%3D0.1/20210228/20210328/DID%3AHPASS%3AWOURRKQ6YKYPBVMKNSR6PSHLW2TDDS5SICFNL2HMVSU73NEO4S7Q%3AOIIAE2TJDDRSKDA5CCKGG3AKRHGAMRUM6MBLZYRBNYQMOVOQECWA/ISSUER%2B%23VC-SOME-LONG-UUID-THAT-LOOKS-LIKE-THIS
+CRED:LIBERTY:1:GBCQEIBB77JDNIVCH7TWFJZHFGWAKXSAGE5S6HRXIMOUI5P6UMJMPAXBC4BCCAGKO42UCH2PFCDTOY5554QJA
+LCL5YXRNH5P6M6EIJ3YINAXYH4XI4:KEYS.PATHCHECK.ORG:JANE/DOE/19810101/%23999999E/COVID-19%20VACCINATION
+/20210228/20210328/DID%3AHPASS%3AWOURRKQ6YKYPBVMKNSR6PSHLW2TDDS5SICFNL2HMVSU73NEO4S7Q%3AOIIAE2TJDDRS
+KDA5CCKGG3AKRHGAMRUM6MBLZYRBNYQMOVOQECWA/SOME-LONG-UUID-THAT-LOOKS-LIKE-THIS
 ```
