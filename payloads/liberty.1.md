@@ -3,13 +3,13 @@
 The IBM **Liberty Health Passport** QR code contains a COVID-19 Vaccination Status of a **HOLDER** on a Regular W3C certificate.
 
 Fields in the **serialization** order:
-1. `firstName`: *Required.* **STRING**. The first name of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. `lastName`: *Required.* **STRING**. The last name of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. `dob`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
-1. `display`: *Required.* **STRING**. The display code for the Status card.
-1. `passType`: *Required.* **STRING**. The display type of passport issued.
-1. `date`: *Required.* **DATE**. The date of issuance of the passport.
-1. `expiration`: *Required.* **DATE**. The date of expiration of the passport.
+1. `credentialSubject.subject.name.given`: *Required.* **STRING**. The first name of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. `credentialSubject.subject.name.family`: *Required.* **STRING**. The last name of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. `credentialSubject.subject.birthDate`: *Required.* **DATE**. The date of birth of the **HOLDER**, to be used when authenticating the **HOLDER**.
+1. `credentialSubject.display`: *Required.* **STRING**. The display code for the Status card.
+1. `credentialSubject.passType`: *Required.* **STRING**. The display type of passport issued.
+1. `issuanceDate`: *Required.* **DATE**. The date of issuance of the passport.
+1. `expirationDate`: *Required.* **DATE**. The date of expiration of the passport.
 1. `issuer`: *Required.* **STRING**. The issuer of the certificate. If a DID, map from hex to Base32URL. 
 1. `id`: *Required.* **STRING**. The ID of this certificate.
 
