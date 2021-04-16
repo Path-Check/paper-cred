@@ -55,9 +55,9 @@ When converting the certificate back to a JSON structure, verifiers must hardcod
     },
     "evidence": [{
         "type": ["Vaccination"],
-        "id": "https://cowin.gov.in/vaccine/${EVID}",
-        "feedbackUrl": "https://cowin.gov.in/?${EVID}",
-        "infoUrl": "https://cowin.gov.in/?${EVID}",
+        "id": "https://cowin.gov.in/vaccine/${evidence.id}",
+        "feedbackUrl": "https://cowin.gov.in/?${evidence.id}",
+        "infoUrl": "https://cowin.gov.in/?${evidence.id}",
         ...
         "verifier": {
             ...
