@@ -20,10 +20,10 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 {
     "@context": ["https://www.w3.org/2018/credentials/v1"],
     "type": ["VerifiableCredential"],
-    "id": "${ISSUER}#vc-${UUID}"
+    "id": "${issuer}#vc-${uuid}"
     ...
     "credentialSchema": {
-        "id": "${ISSUER};id=libertyhealthpass;version=0.1"
+        "id": "${issuer};id=libertyhealthpass;version=0.1"
         "type": "JsonSchemaValidator2018"
     },
     "credentialSubject": {
@@ -32,7 +32,7 @@ When converting the credential back to a JSON structure, verifiers must hardcode
     },
     "proof": {
         ....
-        "creator": "${ISSUER}#${KEYID}"
+        "creator": "${issuer}#${KEYID}"
         "type": "EcdsaSecp256r1Signature2019"
     }
 }
