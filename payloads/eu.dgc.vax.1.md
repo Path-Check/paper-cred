@@ -3,7 +3,10 @@
 This Payload is [defined](https://ec.europa.eu/health/sites/health/files/ehealth/docs/digital-green-certificates_dt-specifications_en.pdf) by the EU and contains a COVID-19 Immunization certificate of a **HOLDER** on a JSON Schema.
 
 Fields in the **serialization** order:
-1. `nam`: *Required.* **STRING50**. Surname(s) and forename(s), in that order;
+1. `nam.fn`: *Optional.* **STRING50**. The family or primary name(s) of the person addressed in the certificate;
+1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
+1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated;
+1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated;
 1. `dob`: *Required.* **DATE**. Date of birth;
 1. `v.tg`: *Required.* **STRING50**. Disease or Agent targeted
     | Code | Description | 
@@ -61,6 +64,63 @@ Fields in the **serialization** order:
 1. NUMERIC1: Single Digit Numeric 1-9. Regex: `[1-9]`
 1. STRING10: String with 10 chars. Regex: `[A-Z]{1,10}`
 1. STRING50: String with 50 chars. 
+
+## JSON Payload
+When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
+```
+{
+  "ver": "1.0.0",
+  "nam": {
+    "fn": ${nam.fn},
+    "gn": ${nam.gn},
+    "fnt": ${nam.fnt},
+    "gnt": ${nam.gnt}
+  },
+  "dob": ${dob},
+  "v": [
+    {
+      "tg": ${v.tg},
+      "vp": ${v.vp},
+      "mp": ${v.mp},
+      "ma": ${v.ma},
+      "dn": ${v.dn},
+      "sd": ${v.sd},
+      "dt": ${v.dt},
+      "co": ${v.co},
+      "is": ${v.is},
+      "ci": ${v.ci}
+    }
+  ]
+}
+```
+
+### JSON Example:
+```
+{
+  "ver": "1.0.0",
+  "nam": {
+    "fn": "d'Arsøns - van Halen",
+    "gn": "François-Joan",
+    "fnt": "DARSONS<VAN<HALEN",
+    "gnt": "FRANCOIS<JOAN"
+  },
+  "dob": "2009-02-28",
+  "v": [
+    {
+      "tg": "840539006",
+      "vp": "1119349007",
+      "mp": "EU/1/20/1528",
+      "ma": "ORG-100030215",
+      "dn": 2,
+      "sd": 2,
+      "dt": "2021-04-21",
+      "co": "NL",
+      "is": "Ministry of Public Health, Welfare and Sport",
+      "ci": "urn:uvci:01:NL:PlA8UWS60Z4RZXVALl6GAZ"
+    }
+  ]
+}
+```
 
 ## Example:
 ```

@@ -3,7 +3,10 @@
 This Payload is [defined](https://ec.europa.eu/health/sites/health/files/ehealth/docs/digital-green-certificates_dt-specifications_en.pdf) by the EU and contains a COVID-19 Test certificate of a **HOLDER** on a JSON Schema.
 
 Fields in the **serialization** order:
-1. `nam`: *Required.* **STRING**. Surname(s) and forename(s), in that order
+1. `nam.fn`: *Optional.* **STRING50**. The family or primary name(s) of the person addressed in the certificate;
+1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
+1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated;
+1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated;
 1. `dob`: *Required.* **DATE**. Date of birth
 1. `t.tg`: *Required.* **STRING**. Disease or Agent targeted
     | Code | Description | 
@@ -43,8 +46,8 @@ Fields in the **serialization** order:
     | 1218 | Siemens Healthineers, CLINITEST Rapid Covid-19 Antigen Test | 
     | 1278 | Xiamen Boson Biotech Co. Ltd, Rapid SARS-CoV-2 Antigen Test Card | 
     | 1343 | Zhejiang Orient Gene Biotech, Coronavirus Ag Rapid Test Cassette (Swab) | 
-1. `t.sc`: *Required.* **DATE**. Date of Sample Collection
-1. `t.dr`: *Optional.* **DATE**. "Date/Time of Test Result
+1. `t.sc`: *Required.* **DATETIME**. Date of Sample Collection
+1. `t.dr`: *Optional.* **DATETIME**. "Date/Time of Test Result
 1. `t.tr`: *Required.* **STRING**. Test Result
     | Code | Description | 
     | ---- | ----------- |
@@ -58,9 +61,67 @@ Fields in the **serialization** order:
 ## Types
 
 1. DATE: Date type ISO 8601 - date part only, restricted to range 1900-2099. Regex: `[19|20][0-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0|1])`
+1. DATETIME: Date type ISO 8601, restricted to range 1900-2099. 
 1. NUMERIC1: Single Digit Numeric 1-9. Regex: `[1-9]`
 1. STRING10: String with 10 chars. Regex: `[A-Z]{1,10}`
 1. STRING50: String with 50 chars. 
+
+## JSON Payload
+When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
+```
+{
+  "ver": "1.0.0",
+  "nam": {
+    "fn": ${nam.fn},
+    "gn": ${nam.gn},
+    "fnt": ${nam.fnt},
+    "gnt": ${nam.gnt}
+  },
+  "dob": ${dob},
+  "t": [
+    {
+      "tg": ${t.tg},
+      "tt": ${t.tt},
+      "tr": ${t.tr},
+      "ma": ${t.ma},
+      "sc": ${t.sc},
+      "dr": ${t.dr},
+      "tc": ${t.tc},
+      "co": ${t.co},
+      "is": ${t.is},
+      "ci": ${t.ci}
+    }
+  ]
+}
+```
+
+### JSON Example:
+```
+{
+  "ver": "1.0.0",
+  "nam": {
+    "fn": "d'Arsøns - van Halen",
+    "gn": "François-Joan",
+    "fnt": "DARSONS<VAN<HALEN",
+    "gnt": "FRANCOIS<JOAN"
+  },
+  "dob": "2009-02-28",
+  "t": [
+    {
+      "tg": "840539006",
+      "tt": "LP217198-3",
+      "tr": "260415000",
+      "ma": "1232",
+      "sc": "2021-04-13T14:20:00+00:00",
+      "dr": "2021-04-13T14:40:01+00:00",
+      "tc": "GGD Fryslân, L-Heliconweg",
+      "co": "NL",
+      "is": "Ministry of Public Health, Welfare and Sport",
+      "ci": "urn:uvci:01:NL:GGD/81AAH16AZ"
+    }
+  ]
+}
+```
 
 ## Example:
 ```
