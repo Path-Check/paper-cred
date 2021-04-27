@@ -5,8 +5,8 @@ This Payload is [defined](https://ec.europa.eu/health/sites/health/files/ehealth
 Fields in the **serialization** order:
 1. `nam.fn`: *Optional.* **STRING50**. The family or primary name(s) of the person addressed in the certificate;
 1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
-1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated;
-1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated;
+1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated. Regex: `^[A-Z<]*$`
+1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `dob`: *Required.* **DATE**. Date of birth. 
 1. `r.tg`: *Required.* **STRING**. Disease or Agent targeted
     | Code | Description | 
@@ -32,21 +32,21 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 {
   "ver": "1.0.0",
   "nam": {
-    "fn": ${nam.fn},
-    "gn": ${nam.gn},
-    "fnt": ${nam.fnt},
-    "gnt": ${nam.gnt}
+    "fn": "${nam.fn}",
+    "gn": "${nam.gn}",
+    "fnt": "${nam.fnt}",
+    "gnt": "${nam.gnt}"
   },
-  "dob": ${dob},
+  "dob": "${dob}",
   "r": [
     {
-      "tg": ${r.tg},
-      "fr": ${r.fr},
-      "co": ${r.co},
-      "is": ${r.is},
-      "df": ${r.df},
-      "du": ${r.du},
-      "ci": ${r.ci}
+      "tg": "${r.tg}",
+      "fr": "${r.fr}",
+      "co": "${r.co}",
+      "is": "${r.is}",
+      "df": "${r.df}",
+      "du": "${r.du}",
+      "ci": "urn:uvci:${v.ci}"
     }
   ]
 }
@@ -79,8 +79,9 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 
 ## Example:
 ```
-CRED:EU.DGC.RECV:1:GBDAEIIAZNI25NOPTBTDHDFDXCS6NHCB27QKB5J6GU4NUVACFVWLXCH
-FNTAQEIIA6QWV4FITWNWOQVUJ3H6HDY6WOAAUJ5I4KADHSD4ZZYPGPQFA6ECQ:1A9.PCF:JOHN
-%20DOE/1982-01-01/840539006/2021-04-22/2021-04-20/2021-10-20/GB/GB%20ISSUE
-R/SOME-UNIQUE-ID
+CRED:EU.DGC.RECV:1:GBCAEICPXUGER4CELE2JV55235RXIJAKSNKOG3OHBFVIWGKKEHPD62LHC4BCAS
+ZE5CRTFVAAX6TEBPQFLHATQ76OVRVILK2IBQ473OXCQ7VEJEID:1A9.PCF:D'ARS%C3%98NS%20-%20VA
+N%20HALEN/FRAN%C3%87OIS-JOAN/DARSONS%3CVAN%3CHALEN/FRANCOIS%3CJOAN/2009-02-28/840
+539006/2021-04-21/2021-05-01/2021-10-21/NL/MINISTRY%20OF%20VWS/01%3ANL%3ALSP%2FRE
+C%2F1289821
 ``` 

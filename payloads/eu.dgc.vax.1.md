@@ -5,8 +5,8 @@ This Payload is [defined](https://ec.europa.eu/health/sites/health/files/ehealth
 Fields in the **serialization** order:
 1. `nam.fn`: *Optional.* **STRING50**. The family or primary name(s) of the person addressed in the certificate;
 1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
-1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated;
-1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated;
+1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated. Regex: `^[A-Z<]*$`
+1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `dob`: *Required.* **DATE**. Date of birth;
 1. `v.tg`: *Required.* **STRING50**. Disease or Agent targeted
     | Code | Description | 
@@ -71,24 +71,24 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 {
   "ver": "1.0.0",
   "nam": {
-    "fn": ${nam.fn},
-    "gn": ${nam.gn},
-    "fnt": ${nam.fnt},
-    "gnt": ${nam.gnt}
+    "fn": "${nam.fn}",
+    "gn": "${nam.gn}",
+    "fnt": "${nam.fnt}",
+    "gnt": "${nam.gnt}"
   },
-  "dob": ${dob},
+  "dob": "${dob}",
   "v": [
     {
-      "tg": ${v.tg},
-      "vp": ${v.vp},
-      "mp": ${v.mp},
-      "ma": ${v.ma},
-      "dn": ${v.dn},
-      "sd": ${v.sd},
-      "dt": ${v.dt},
-      "co": ${v.co},
-      "is": ${v.is},
-      "ci": ${v.ci}
+      "tg": "${v.tg}",
+      "vp": "${v.vp}",
+      "mp": "${v.mp}",
+      "ma": "${v.ma}",
+      "dn": "${v.dn}",
+      "sd": "${v.sd}",
+      "dt": "${v.dt}",
+      "co": "${v.co}",
+      "is": "${v.is}",
+      "ci": "urn:uvci:${v.ci}"
     }
   ]
 }
@@ -116,7 +116,7 @@ When converting the credential back to a JSON structure, verifiers must hardcode
       "dt": "2021-04-21",
       "co": "NL",
       "is": "Ministry of Public Health, Welfare and Sport",
-      "ci": "urn:uvci:01:NL:PlA8UWS60Z4RZXVALl6GAZ"
+      "ci": "01:NL:PlA8UWS60Z4RZXVALl6GAZ"
     }
   ]
 }
@@ -124,8 +124,9 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 
 ## Example:
 ```
-CRED:EU.DGC.VAX:1:GBDAEIIAZTKNS5MUFU3MZXYEHZRV77HSXMUFTHFPK477HDF6RWPYNMRYEBMAEIIARC
-5F3HL3QBINBHKFYERUY6L5WPVMDHBHR4JPJ6PIYYVDRCXQTCOA:1A9.PCF:JOHN%20DOE/1982-01-01/840
-539006/1119349007/EU%2F1%2F20%2F1507/ORG-100031184/1/2/2021-04-23/GB/GB%20ISSUER/SOM
-E-UNIQUE-ID
+CRED:EU.DGC.VAX:1:GBCQEIIAZ24WO7SM36K4J6ZKXOMMNHNIJ5L72D2WOIYPIMU3RJG36SVIQWTQEIA7Z
+6WMLK3TFPCWL6O2M7NH2ZNDHDIL7M73NIXEVGQ3D467JABILU:1A9.PCF:D'ARS%C3%98NS%20-%20VAN%2
+0HALEN/FRAN%C3%87OIS-JOAN/DARSONS%3CVAN%3CHALEN/FRANCOIS%3CJOAN/2009-02-28/84053900
+6/1119349007/EU%2F1%2F20%2F1528/ORG-100030215/2/2/2021-04-27/NL/MINISTRY%20OF%20VWS
+/01%3ANL%3APLA8UWS60Z4RZXVALL6GAZ
 ``` 

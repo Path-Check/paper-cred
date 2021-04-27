@@ -5,8 +5,8 @@ This Payload is [defined](https://ec.europa.eu/health/sites/health/files/ehealth
 Fields in the **serialization** order:
 1. `nam.fn`: *Optional.* **STRING50**. The family or primary name(s) of the person addressed in the certificate;
 1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
-1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated;
-1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated;
+1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated. Regex: `^[A-Z<]*$`
+1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `dob`: *Required.* **DATE**. Date of birth
 1. `t.tg`: *Required.* **STRING**. Disease or Agent targeted
     | Code | Description | 
@@ -72,24 +72,24 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 {
   "ver": "1.0.0",
   "nam": {
-    "fn": ${nam.fn},
-    "gn": ${nam.gn},
-    "fnt": ${nam.fnt},
-    "gnt": ${nam.gnt}
+    "fn": "${nam.fn}",
+    "gn": "${nam.gn}",
+    "fnt": "${nam.fnt}",
+    "gnt": "${nam.gnt}"
   },
-  "dob": ${dob},
+  "dob": "${dob}",
   "t": [
     {
-      "tg": ${t.tg},
-      "tt": ${t.tt},
-      "tr": ${t.tr},
-      "ma": ${t.ma},
-      "sc": ${t.sc},
-      "dr": ${t.dr},
-      "tc": ${t.tc},
-      "co": ${t.co},
-      "is": ${t.is},
-      "ci": ${t.ci}
+      "tg": "${t.tg}",
+      "tt": "${t.tt}",
+      "tr": "${t.tr}",
+      "ma": "${t.ma}",
+      "sc": "${t.sc}",
+      "dr": "${t.dr}",
+      "tc": "${t.tc}",
+      "co": "${t.co}",
+      "is": "${t.is}",
+      "ci": "urn:uvci:${v.ci}"
     }
   ]
 }
@@ -125,8 +125,9 @@ When converting the credential back to a JSON structure, verifiers must hardcode
 
 ## Example:
 ```
-CRED:EU.DGC.TEST:1:GBCQEIBSLX2TBQAEG4DZOHXLWXFZWP32EBAQIJUCUOE4KRX4IYGB6E5EPUBCCAHZ7
-T5K74OKAU4SB5YCPYVJ24OGPXEJJQHQJ6QXYARGBCBRGBFTBY:1A9.PCF:JOHN%20DOE/1982-01-01/8405
-39006/LP6464-4/COVID%20PCR/1232/2021-04-20/2021-04-22/260373001/TEST%20CENTER/GB/GB%
-20ISSUER/SOME-UNIQUE-ID
+CRED:EU.DGC.TEST:1:GBCAEIA53EPD2MMZNV7L6RL6BOPRMPFUJFQLLCL5QXTPXNWUVWQY4VALJIBCAMVGVJJNF
+CJ2IVUIDN5NFVHFU2ACCHVGCHW7CY2NUHLKGEMHWRE2:1A9.PCF:D'ARS%C3%98NS%20-%20VAN%20HALEN/FRAN
+%C3%87OIS-JOAN/DARSONS%3CVAN%3CHALEN/FRANCOIS%3CJOAN/2009-02-28/840539006/LP217198-3/COV
+ID%20PCR/1232/2021-04-13T14%3A20%3A00%2B00%3A00/2021-04-13T14%3A40%3A01%2B00%3A00/260415
+000/GGD%20FRYSL%C3%82N%2C%20L-HELICONWEG/NL/MINISTRY%20OF%20VWS/01%3ANL%3AGGD%2F81AAH16AZ
 ``` 
