@@ -1,4 +1,4 @@
-# **ICAO's Visible Digital Seal: Vaccine ** Payload
+# **ICAO's Visible Digital Seal: Vaccine** Payload
 
 This Payload is defined by ICAO and contains a COVID-19 Immunization certificate of a **HOLDER** on a JSON Schema.
 
@@ -22,7 +22,7 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601 - date part only, restricted to range 1900-2099. Regex: `[19|20][0-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0|1])`
+1. DATE: Date type ISO 8601
 1. STRING: String with 100 chars. 
 
 ## JSON Payload
@@ -61,8 +61,8 @@ When converting the credential back to a JSON structure, verifiers must hardcode
     },
     "sig": {
         "alg": "ES256",
-        "cer": pubKeyEUPEM,
-        "sigvl": "cxfyi2vq2XJfZF7ksEkIZJtKbGrRE570..."
+        "cer": "CERTIFICATE",
+        "sigvl": "SIGNATURE"
     }
 };
 ```

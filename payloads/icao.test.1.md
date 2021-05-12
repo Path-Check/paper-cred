@@ -1,4 +1,4 @@
-# **ICAO's Visible Digital Seal: Vaccine ** Payload
+# **ICAO's Visible Digital Seal: Vaccine** Payload
 
 This Payload is defined by ICAO and contains a COVID-19 Immunization certificate of a **HOLDER** on a JSON Schema.
 
@@ -32,11 +32,57 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601 - date part only, restricted to range 1900-2099. Regex: `[19|20][0-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0|1])`
+1. DATE: Date type ISO 8601
 1. STRING: String with 100 chars. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
+```
+{
+    "data": {
+        "hdr": {
+            "t": "icao.test",
+            "v": 1,
+            "is": "UTO"
+        },
+        "msg": {
+            "utci": ${utci},
+            "pid": {
+                "n": ${pid-n},
+                "dob": ${pid-dob},
+                "dt": ${pid-dt},
+                "dn": ${pid-dn}
+            },
+            "sp": {
+                "spn": ${sp-spn},
+                "ctr": ${sp-ctr},
+                "cd": {
+                    "p": ${sp-cd-p},
+                    "e": ${sp-cd-e},
+                    "a": ${sp-cd-a}
+                }
+            },
+            "dat": {
+                "sc": ${dat-sc},
+                "ri": ${dat-ri} 
+            },
+            "tr": {
+                "tc":  ${tr-tc},
+                "r": ${tr-r},
+                "m": ${tr-m}
+            },
+            "opt": ${opt}
+        }
+    },
+    "sig": {
+        "alg": "ES256",
+        "cer": "CERTIFICATE",
+        "sigvl": "SIGNATURE"
+    }
+};
+```
+
+### JSON Example:
 ```
 {
     "data": {
@@ -78,54 +124,6 @@ When converting the credential back to a JSON structure, verifiers must hardcode
         "alg": "ES256",
         "cer": "MIIBeTCCAR2gAwIBAgIBZzAMBggqhkjOPQ...",
         "sigvl": "z_VZDdMvjjRkg06nYLwHt4BP_APEm3MJ..."
-    }
-}
-```
-
-### JSON Example:
-```
-{
-    "data": {
-        "hdr": {
-            "t": "icao.vacc",
-            "v": 1,
-            "is": "UTO"
-        },
-        "msg": {
-            "uvci": "U32870",
-            "pid": {
-                "n": "Smith Bill",
-                "dob": "1990-01-02",
-                "sex": "M",
-                "i": "A1234567Z",
-                "ai": "L4567890Z"
-            },
-            "ve": [{
-                "des": "XM68M6",
-                "nam": "Comirnaty",
-                "dis": "RA01.0",
-                "vd": [{
-                        "dvc": "2021-03-03",
-                        "seq": 1,
-                        "ctr": "UTO",
-                        "adm": "RIVM",
-                        "lot": "VC35679",
-                        "dvn": "2021-03-24"
-                    },
-                    {
-                        "dvc": "2021-03-24",
-                        "seq": 2,
-                        "ctr": "UTO",
-                        "adm": "RIVM",
-                        "lot": "VC87540"
-                    }]
-            }]
-        },
-        "sig": {
-            "alg": "ES256",
-            "cer": "MIIBeTCCAR2gAwIBAgIBaDAMBggqhkjOPQ...",
-            "sigvl": "cxfyi2vq2XJfZF7ksEkIZJtKbGrRE570..."
-        }
     }
 }
 ```
