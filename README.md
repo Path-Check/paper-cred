@@ -160,6 +160,7 @@ This document will use the following terms to define data types.
 3. **HASH**: The **HASH** data type is a sequence of 52 alphanumeric characters containing a base32-encoded hash.
 3. **SIGNATUREBASE32**: The **SIGNATUREBASE32** data type is a sequence of up-to-102 alphanumeric characters containing a base32url-encoded digest.
 4. **DATE**: a date, in [ISO 8601 (YYYYMMDD) Basic Notation](https://en.wikipedia.org/wiki/ISO_8601). Example: `20200201` is 1 February, 2020.
+4. **TIMESTAMP**: a date time, in seconds from Epoch. Example: `1607745600` is `2020-12-12T12:00:00+08:00`.
 5. **SHORTSTRING**: a sequence of US-ASCII characters which is limited to 8 bytes in length.
 6. **SHORTNUMERIC**: a **NUMERIC** with a maximum value of 9.
 7. **PHONE**: a E.164 formatted phone number as string. US-ASCII, maximum 15 characters.

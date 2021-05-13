@@ -46,8 +46,8 @@ Fields in the **serialization** order:
     | 1218 | Siemens Healthineers, CLINITEST Rapid Covid-19 Antigen Test | 
     | 1278 | Xiamen Boson Biotech Co. Ltd, Rapid SARS-CoV-2 Antigen Test Card | 
     | 1343 | Zhejiang Orient Gene Biotech, Coronavirus Ag Rapid Test Cassette (Swab) | 
-1. `t.sc`: *Required.* **DATETIME**. Date of Sample Collection
-1. `t.dr`: *Optional.* **DATETIME**. "Date/Time of Test Result
+1. `t.sc`: *Required.* **TIMESTAMP**. Date of Sample Collection
+1. `t.dr`: *Optional.* **TIMESTAMP**. "Date/Time of Test Result
 1. `t.tr`: *Required.* **STRING**. Test Result
     | Code | Description | 
     | ---- | ----------- |
@@ -60,11 +60,11 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601 - date part only, restricted to range 1900-2099. Regex: `[19|20][0-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0|1])`
-1. DATETIME: Date type ISO 8601, restricted to range 1900-2099. 
-1. NUMERIC1: Single Digit Numeric 1-9. Regex: `[1-9]`
-1. STRING10: String with 10 chars. Regex: `[A-Z]{1,10}`
-1. STRING50: String with 50 chars. 
+1. **DATE**: Date type ISO 8601, in [ISO 8601 (YYYYMMDD) Basic Notation]
+1. **TIMESTAMP**: Datetime in seconds since Epoch
+1. **NUMERIC1**: Single Digit Numeric 1-9. Regex: `[1-9]`
+1. **STRING10**: String with 10 chars. Regex: `[A-Z]{1,10}`
+1. **STRING50**: String with 50 chars. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`

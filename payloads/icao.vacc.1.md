@@ -22,8 +22,9 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601
-1. STRING: String with 100 chars. 
+1. **DATE**: Date type ISO 8601, in [ISO 8601 (YYYYMMDD) Basic Notation]
+1. **TIMESTAMP**: Datetime in seconds since Epoch
+1. **STRING**: String with 100 chars. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`

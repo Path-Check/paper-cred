@@ -23,8 +23,8 @@ Fields in the **serialization** order:
 1. `sp.cd.p`: *Required.* **STRING** Contact number of testing facility or service. Max 19
 1. `sp.cd.e`: **STRING** Email address of testing facility or service provider
 1. `sp.cd.a`: **STRING** Address of testing facility or service provider
-1. `dat.sc`: *Required.* **DATE** Date on which the sample was collected
-1. `dat.ri`: *Required.* **DATE** Date on which the report was issued
+1. `dat.sc`: *Required.* **TIMESTAMP** Date on which the sample was collected
+1. `dat.ri`: *Required.* **TIMESTAMP** Date on which the report was issued
 1. `tr.tc`: *Required.* **STRING** Type of test conducted (molecular(PCR), molecular(other), antigen, antibody)
 1. `tr.r`: *Required.* **STRING** Result of Test (normal, abnormal, positive, negative)
 1. `tr.m`: *Optional.* **STRING** Sampling method (nasopharyngeal, oropharyngeal, saliva, blood, other)
@@ -32,8 +32,9 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601
-1. STRING: String with 100 chars. 
+1. **DATE**: Date type ISO 8601, in [ISO 8601 (YYYYMMDD) Basic Notation]
+1. **TIMESTAMP**: Datetime in seconds since Epoch
+1. **STRING**: String with 100 chars. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`

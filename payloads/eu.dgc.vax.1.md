@@ -60,10 +60,11 @@ Fields in the **serialization** order:
 
 ## Types
 
-1. DATE: Date type ISO 8601 - date part only, restricted to range 1900-2099. Regex: `[19|20][0-9][0-9]-(0[1-9]|1[0-2])-([0-2][1-9]|3[0|1])`
-1. NUMERIC1: Single Digit Numeric 1-9. Regex: `[1-9]`
-1. STRING10: String with 10 chars. Regex: `[A-Z]{1,10}`
-1. STRING50: String with 50 chars. 
+1. **DATE**: Date type ISO 8601, in [ISO 8601 (YYYYMMDD) Basic Notation]
+1. **TIMESTAMP**: Datetime in seconds since Epoch
+1. **NUMERIC1**: Single Digit Numeric 1-9. Regex: `[1-9]`
+1. **STRING10**: String with 10 chars. Regex: `[A-Z]{1,10}`
+1. **STRING50**: String with 50 chars. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
