@@ -1,1 +1,4 @@
-nam.fn/nam.gn/nam.fnt/nam.gnt/dob/nvs/v.tg/v.vp/v.mp/v.ma/v.dn/v.sd/v.dt/v.co/v.is/v.ci/nts/t.tg/t.tt/t.nm/t.ma/t.sc/t.dr/t.tr/t.tc/t.co/t.is/t.ci/nrs/r.tg/r.fr/r.df/r.du/r.co/r.is/r.ci
+nam.fn/nam.gn/nam.fnt/nam.gnt/dob/$nvs/$nts/$nrs
+$nvs:v.tg/v.vp/v.mp/v.ma/v.dn/v.sd/v.dt/v.co/v.is/v.ci
+$nts:t.tg/t.tt/t.nm/t.ma/t.sc/t.dr/t.tr/t.tc/t.co/t.is/t.ci
+$nrs:r.tg/r.fr/r.df/r.du/r.co/r.is/r.ci
