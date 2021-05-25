@@ -89,7 +89,7 @@ When converting the credential back to a JSON structure, verifiers must hardcode
       "tc": "${t.tc}",
       "co": "${t.co}",
       "is": "${t.is}",
-      "ci": "urn:uvci:${v.ci}"
+      "ci": "urn:uvci:${t.ci}"
     }
   ]
 }

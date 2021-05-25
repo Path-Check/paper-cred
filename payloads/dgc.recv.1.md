@@ -47,7 +47,7 @@ When converting the credential back to a JSON structure, verifiers must hardcode
       "is": "${r.is}",
       "df": "${r.df}",
       "du": "${r.du}",
-      "ci": "urn:uvci:${v.ci}"
+      "ci": "urn:uvci:${r.ci}"
     }
   ]
 }
