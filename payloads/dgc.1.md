@@ -8,6 +8,9 @@ Fields in the **serialization** order:
 1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `dob`: *Required.* **DATE**. Date of birth;
+1. `iat`: *Required.* **DATE**. Issued At
+1. `exp`: *Required.* **DATE**. Expiration
+1. `iss`: *Optional.* **STRING50**. Issuing Country
 
 1. `nvs`: *Required.* **NUMERIC**. Number of Vaccinations in this record
     1. `v.tg`: *Required.* **STRING50**. Disease or Agent targeted
