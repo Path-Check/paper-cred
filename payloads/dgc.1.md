@@ -7,13 +7,13 @@ Fields in the **serialization** order:
 1. `nam.gn`: *Optional.* **STRING50**. The given name(s) of the person addressed in the certificate;
 1. `nam.fnt`: *Required.* **STRING50**. Standardised family name: The family name(s) of the person transliterated. Regex: `^[A-Z<]*$`
 1. `nam.gnt`: *Optional.* **STRING50**. Standardised given name: The given name(s) of the person transliterated. Regex: `^[A-Z<]*$`
-1. `dob`: *Required.* **DATE**. Date of birth;
-1. `iat`: *Required.* **DATE**. Issued At
-1. `exp`: *Required.* **DATE**. Expiration
+1. `dob`: *Required.* **DAYSFROMISSUING**. Date of birth
+1. `iat`: *Required.* **TIMESTAMP**. Issued At
+1. `exp`: *Required.* **SECONDSFROMISSUINGBASE32**. Expiration
 1. `iss`: *Optional.* **STRING50**. Issuing Country
 
 1. `nvs`: *Required.* **NUMERIC**. Number of Vaccinations in this record
-    1. `v.tg`: *Required.* **STRING50**. Disease or Agent targeted
+    1. `v.tg`: *Required.* **BASE32STRING**. Disease or Agent targeted. Codes below are converted from Base10 to Base32
         Code | Description | 
         ---- | ----------- |
         840539006 | COVID19 |
@@ -58,14 +58,14 @@ Fields in the **serialization** order:
         Bharat-Biotech | Bharat Biotech |
     1. `v.dn`: *Required.* **NUMERIC1**. Dose Number
     1. `v.sd`: *Required.* **STRING50**. Total Series of Doses
-    1. `v.dt`: *Required.* **DATE**. Date of Vaccination, indicating the date of the latest dose received
+    1. `v.dt`: *Required.* **DAYSFROMISSUINGBASE32**. Date of Vaccination, indicating the date of the latest dose received
     1. `v.co`: *Required.* **STRING10**. Country - Member State of vaccination: ISO 3166 Country Codes (2-letter codes)
     1. `v.is`: *Required.* **STRING50**. Issuer
     1. `v.ci`: *Required.* **STRING50**. Unique certificate identifier.
 
 
 1. `nts`: *Required.* **NUMERIC**. Number of Vaccinations in this record
-    1. `t.tg`: *Required.* **STRING**. Disease or Agent targeted
+    1. `t.tg`: *Required.* **BASE32STRING**. Disease or Agent targeted. Codes below are converted from Base10 to Base32
         Code | Description | 
         ---- | ----------- |
         840539006 | COVID19 |
@@ -103,8 +103,7 @@ Fields in the **serialization** order:
         1218 | Siemens Healthineers, CLINITEST Rapid Covid-19 Antigen Test | 
         1278 | Xiamen Boson Biotech Co. Ltd, Rapid SARS-CoV-2 Antigen Test Card | 
         1343 | Zhejiang Orient Gene Biotech, Coronavirus Ag Rapid Test Cassette (Swab) | 
-    1. `t.sc`: *Required.* **TIMESTAMP**. Date of Sample Collection
-    1. `t.dr`: *Optional.* **TIMESTAMP**. "Date/Time of Test Result
+    1. `t.sc`: *Required.* **SECONDSFROMISSUINGBASE32**. Date of Sample Collection
     1. `t.tr`: *Required.* **STRING**. Test Result
         Code | Description | 
         ---- | ----------- |
@@ -116,24 +115,26 @@ Fields in the **serialization** order:
     1. `t.ci`: *Required.* **STRING**. Unique certificate identifier.
 
 1. `nrs`: *Required.* **NUMERIC**. Number of Vaccinations in this record
-    1. `r.tg`: *Required.* **STRING**. Disease or Agent targeted
+    1. `r.tg`: *Required.* **BASE32STRING**. Disease or Agent targeted. Codes below are converted from Base10 to Base32
         Code | Description | 
         ---- | ----------- |
         840539006 | COVID19 |
-    1. `r.fr`: *Required.* **DATE**. Date of First Positive Test Result
-    1. `r.df`: *Required.* **DATE**. Certificate Valid From
-    1. `r.du`: *Required.* **DATE**. Certificate Valid Until
+    1. `r.fr`: *Required.* **DAYSFROMISSUINGBASE32**. Date of First Positive Test Result
+    1. `r.df`: *Required.* **DAYSFROMISSUINGBASE32**. Certificate Valid From
+    1. `r.du`: *Required.* **DAYSFROMISSUINGBASE32**. Certificate Valid Until
     1. `r.co`: *Required.* **STRING10**. Country - Member State of vaccination
     1. `r.is`: *Required.* **STRING50**. Issuer
     1. `r.ci`: *Required.* **STRING50**. Unique certificate identifier.
 
 ## Types
 
-1. **DATE**: Date type ISO 8601, in [ISO 8601 (YYYYMMDD) Basic Notation]
-1. **TIMESTAMP**: Datetime in seconds since Epoch
 1. **NUMERIC1**: Single Digit Numeric 1-9. Regex: `[1-9]`
 1. **STRING10**: String with 10 chars. Regex: `[A-Z]{1,10}`
 1. **STRING50**: String with 50 chars. 
+1. **BASE32STRING**: String with 10 chars. 
+1. **TIMESTAMP**: Datetime in seconds since Epoch (January 1, 1970 00:00:00 UTC)
+1. **SECONDSFROMISSUINGBASE32**: date as a difference from issuing date, in days, represented in Base32. 
+1. **DAYSFROMISSUINGBASE32**: date as a difference from issuing date, in days, represented in Base32. 
 
 ## JSON Payload
 When converting the credential back to a JSON structure, verifiers must hardcode this JSON template, replacing `${field}` by the content of `field`
@@ -168,7 +169,6 @@ When converting the credential back to a JSON structure, verifiers must hardcode
       "tr": "${t.tr}",
       "ma": "${t.ma}",
       "sc": "${t.sc}",
-      "dr": "${t.dr}",
       "tc": "${t.tc}",
       "co": "${t.co}",
       "is": "${t.is}",
